@@ -14,6 +14,7 @@ const path = require("path");
 const crypto = require("crypto");
 const express = require("express");
 const { Pool } = require("pg");
+const tpl = require("./templates");
 
 const PORT = Number(process.env.PORT) || 10000;
 const ROOT = path.join(__dirname, "..");
@@ -55,6 +56,7 @@ async function migrate() {
       UNIQUE (email, key_hash)
     );
     CREATE INDEX IF NOT EXISTS subscribers_weekly_idx ON subscribers (verified, weekly);
+    ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS report_data JSONB;
   `);
 }
 
@@ -84,32 +86,30 @@ function mailConfigured() {
   return dbReady && (DRY_RUN || (!!process.env.BREVO_API_KEY && !!SENDER_EMAIL));
 }
 
-function htmlFromText(body, footer) {
-  return `<!doctype html><html><body style="margin:0;background:#f4f5fb;padding:24px 12px;font-family:Segoe UI,Roboto,Arial,sans-serif;color:#1f2433">
-  <div style="max-width:620px;margin:0 auto;background:#fff;border-radius:14px;padding:24px 26px;border:1px solid #e3e5f0">
-    <div style="font-weight:700;color:#4b4fd6;font-size:18px;margin-bottom:14px">🎓 LearnMate</div>
-    <div style="white-space:pre-wrap;font-size:14.5px;line-height:1.6">${escHtml(body)}</div>
-    <hr style="border:none;border-top:1px solid #eceef5;margin:20px 0 12px">
-    <div style="font-size:12px;color:#6b7083;line-height:1.5">${footer}</div>
-  </div></body></html>`;
-}
-
 const outbox = []; // chỉ dùng khi MAIL_DRY_RUN=1 để kiểm thử
 
-async function sendMail({ to, name, subject, text, unsubToken }) {
+/**
+ * Gửi một email. `data` (đã làm sạch) chọn mẫu HTML phù hợp; `html` dùng trực tiếp nếu có;
+ * nếu không có cả hai thì bọc văn bản trong khung chung.
+ */
+async function sendMail({ to, name, subject, text, unsubToken, data = null, html = null, staleDays = 0 }) {
   const unsub = unsubToken ? `${PUBLIC_URL}/api/notify/unsubscribe?t=${encodeURIComponent(unsubToken)}` : null;
   const footerText = `\n\n—\nMở LearnMate: ${PUBLIC_URL}${unsub ? `\nNgừng nhận email: ${unsub}` : ""}`;
-  const footerHtml = `<a href="${PUBLIC_URL}" style="color:#4b4fd6">Mở LearnMate</a>${unsub ? ` · <a href="${unsub}" style="color:#6b7083">Ngừng nhận email</a>` : ""}`;
+  const ctx = { appUrl: PUBLIC_URL, unsubUrl: unsub, staleDays };
+  let htmlContent = html;
+  if (!htmlContent && data && data.type === "lesson") htmlContent = tpl.renderLesson(data, ctx);
+  if (!htmlContent && data && data.type === "report") htmlContent = tpl.renderReport(data, ctx);
+  if (!htmlContent) htmlContent = tpl.renderPlain({ subject, text, ...ctx });
   const payload = {
     sender: { email: SENDER_EMAIL || "dry-run@learnmate.local", name: SENDER_NAME },
     to: [{ email: to, name: name || undefined }],
     subject,
     textContent: text + footerText,
-    htmlContent: htmlFromText(text, footerHtml),
+    htmlContent,
     headers: unsub ? { "List-Unsubscribe": `<${unsub}>` } : undefined,
   };
   if (DRY_RUN) {
-    outbox.push({ to, subject, text: payload.textContent, at: new Date().toISOString() });
+    outbox.push({ to, subject, text: payload.textContent, html: htmlContent, at: new Date().toISOString() });
     if (outbox.length > 50) outbox.shift();
     console.log(`[dry-run] mail → ${to}: ${subject}`);
     return { ok: true };
@@ -164,7 +164,8 @@ async function sendVerification(sub) {
     `Nếu bạn không yêu cầu, hãy bỏ qua email này – bạn sẽ không nhận thêm thư nào.`,
   ].join("\n");
   await pool.query(`UPDATE subscribers SET verify_sent_at = now() WHERE id = $1`, [sub.id]);
-  return sendMail({ to: sub.email, name: sub.name, subject: "[LearnMate] Xác nhận nhận thông báo học tập", text });
+  const html = tpl.renderVerify({ name: sub.name, onLesson: sub.on_lesson, weekly: sub.weekly, link, appUrl: PUBLIC_URL });
+  return sendMail({ to: sub.email, name: sub.name, subject: "[LearnMate] Xác nhận nhận thông báo học tập", text, html });
 }
 
 // ───────── Báo cáo hằng tuần ─────────
@@ -186,7 +187,8 @@ async function runWeekly({ lazy = false } = {}) {
       if (!(await takeQuota(sub.id))) continue;
       const age = sub.report_at ? Math.floor((Date.now() - new Date(sub.report_at).getTime()) / 86400000) : null;
       const note = age && age >= 2 ? `\n\n(Số liệu cập nhật lần cuối ${age} ngày trước – lần gần nhất người học mở LearnMate.)` : "";
-      const r = await sendMail({ to: sub.email, name: sub.name, subject: sub.report_subject || "[LearnMate] Báo cáo học tập hằng tuần", text: sub.report_body + note, unsubToken: sub.unsub_token });
+      const data = tpl.cleanData(sub.report_data);
+      const r = await sendMail({ to: sub.email, name: sub.name, subject: sub.report_subject || "[LearnMate] Báo cáo học tập hằng tuần", text: sub.report_body + note, unsubToken: sub.unsub_token, data, staleDays: age || 0 });
       if (r.ok) {
         sent++;
         await pool.query(`UPDATE subscribers SET weekly_sent_at = now() WHERE id = $1`, [sub.id]);
@@ -300,7 +302,8 @@ app.post("/api/notify/lesson", wrap(async (req, res) => {
   const body = cleanText(req.body.body, 12000);
   if (!subject || !body) return res.status(400).json({ ok: false, error: "Thiếu nội dung email." });
   if (!(await takeQuota(sub.id))) return res.status(429).json({ ok: false, error: "Đã đạt giới hạn email trong ngày." });
-  const r = await sendMail({ to: sub.email, name: sub.name, subject, text: body, unsubToken: sub.unsub_token });
+  const data = tpl.cleanData(req.body.data);
+  const r = await sendMail({ to: sub.email, name: sub.name, subject, text: body, unsubToken: sub.unsub_token, data: data && data.type === "lesson" ? data : null });
   if (!r.ok) return res.status(502).json({ ok: false, error: "Dịch vụ email đang lỗi. Vui lòng thử lại sau." });
   res.json({ ok: true, sent: true });
 }));
@@ -316,11 +319,13 @@ app.post("/api/notify/report", wrap(async (req, res) => {
   const body = cleanText(req.body.body, 12000);
   if (!subject || !body) return res.status(400).json({ ok: false, error: "Thiếu nội dung báo cáo." });
   if (rateLimited(`rep:${sub.id}`, 60, 60 * 60 * 1000)) return res.status(429).json({ ok: false, error: "Cập nhật quá thường xuyên." });
-  await pool.query(`UPDATE subscribers SET report_subject=$2, report_body=$3, report_at=now() WHERE id=$1`, [sub.id, subject, body]);
+  const rdata = tpl.cleanData(req.body.data);
+  const reportData = rdata && rdata.type === "report" ? rdata : null;
+  await pool.query(`UPDATE subscribers SET report_subject=$2, report_body=$3, report_data=$4, report_at=now() WHERE id=$1`, [sub.id, subject, body, reportData ? JSON.stringify(reportData) : null]);
   if (!req.body.send) return res.json({ ok: true, saved: true, status: publicStatus(sub) });
   if (!sub.verified) return res.status(403).json({ ok: false, error: "Email chưa được xác nhận. Hãy mở hộp thư và bấm liên kết xác nhận.", status: publicStatus(sub) });
   if (!(await takeQuota(sub.id))) return res.status(429).json({ ok: false, error: "Đã đạt giới hạn email trong ngày." });
-  const r = await sendMail({ to: sub.email, name: sub.name, subject, text: body, unsubToken: sub.unsub_token });
+  const r = await sendMail({ to: sub.email, name: sub.name, subject, text: body, unsubToken: sub.unsub_token, data: reportData });
   if (!r.ok) return res.status(502).json({ ok: false, error: "Dịch vụ email đang lỗi. Vui lòng thử lại sau." });
   res.json({ ok: true, saved: true, sent: true });
 }));
@@ -361,7 +366,10 @@ app.post("/api/cron/weekly", wrap(async (req, res) => {
   res.json({ ok: true, ...(await runWeekly()) });
 }));
 
-if (DRY_RUN) app.get("/api/dev/outbox", (req, res) => res.json(outbox));
+if (DRY_RUN) {
+  app.get("/api/dev/outbox", (req, res) => res.json(outbox.map(({ html, ...m }) => m)));
+  app.get("/api/dev/outbox/:i", (req, res) => { const m = outbox[Number(req.params.i)]; m ? res.type("html").send(m.html) : res.sendStatus(404); });
+}
 
 app.use("/api", (req, res) => res.status(404).json({ ok: false, error: "Không tìm thấy." }));
 

@@ -3109,7 +3109,27 @@ function lessonResultEmail(profile, lesson) {
     missed.length && pct < 80 ? `Ôn lại bài “${lesson.title}” trước khi học tiếp.` : next ? `Học bài tiếp theo: “${next.title}”.` : `Đây là bài cuối của môn – hãy xem báo cáo tiến độ để chọn hướng ôn tập.`,
     signature(),
   ].join("\n");
-  return { subject: `[LearnMate] Kết quả bài “${short(lesson.title, 50)}”: ${sc.correct}/${sc.total} câu đúng (${pct}%)`, body };
+  const data = {
+    type: "lesson",
+    name: profile.name,
+    lessonId: lesson.id,
+    title: lesson.title,
+    subject: subject ? subject.name : "",
+    level: lesson.level && LEVELS[lesson.level] ? LEVELS[lesson.level] : "",
+    completedAt: fmtDateTime(when),
+    correct: sc.correct,
+    total: sc.total,
+    questions: lesson.questions.map((q) => {
+      const qs = st.questions[q.id] || {};
+      const status = ["correct", "revealed", "skipped"].includes(qs.status) ? qs.status : "pending";
+      const label = status === "correct" ? (qs.firstTry ? "Đúng ngay lần đầu" : `Đúng sau ${qs.attempts || 1} lần thử`) : status === "revealed" ? "Đã xem lời giải" : status === "skipped" ? "Bỏ qua" : "Chưa làm";
+      return { prompt: short(q.prompt, 150), status, label: label + (qs.hints ? ` · ${qs.hints} gợi ý` : "") };
+    }),
+    nextTitle: next ? next.title : "",
+    nextId: next ? next.id : "",
+    action: missed.length && pct < 80 ? "review" : next ? "next" : "done",
+  };
+  return { subject: `[LearnMate] Kết quả bài “${short(lesson.title, 50)}”: ${sc.correct}/${sc.total} câu đúng (${pct}%)`, body, data };
 }
 
 /** Email báo cáo quá trình học tập (7 ngày gần nhất + tổng hợp). */
@@ -3155,7 +3175,35 @@ function progressReportEmail(profile) {
   ]
     .filter((l, i, arr) => !(l === "" && arr[i - 1] === ""))
     .join("\n");
-  return { subject: `[LearnMate] Báo cáo học tập của ${profile.name} (${from} – ${to})`, body };
+  const data = {
+    type: "report",
+    name: profile.name,
+    from,
+    to,
+    goal: `${goalSubject ? goalSubject.name : "—"} · ${LEVELS[profile.goal.level] || ""} · ${profile.goal.sessionsPerWeek} buổi/tuần × ${profile.goal.minutesPerSession} phút`,
+    seeded: !!s.seeded,
+    pathPct: Math.round(s.pathPct),
+    pathDone: s.pathDone,
+    pathTotal: s.path.length,
+    completed: s.completed,
+    inProgress: s.inProgress,
+    accuracy: s.accuracy == null ? null : Math.round(s.accuracy * 100),
+    correct: s.correct,
+    answered: s.answered,
+    firstTry: s.firstTry,
+    weekMinutes: Math.round(s.weekSeconds / 60),
+    targetMinutes: Math.round(s.weeklyTargetSeconds / 60),
+    totalMinutes: Math.round(s.totalSeconds / 60),
+    week: s.week.map((d) => ({ label: d.label, minutes: Math.round(d.seconds / 60) })),
+    bySubject: s.bySubject.map((b) => ({ name: b.subject.name, pct: b.answered ? pctOf(b.correct, b.answered) : null, completed: b.completed, total: b.total })),
+    strong: s.strong.slice(0, 6).map((r) => ({ title: r.lesson.title, score: `${r.correct}/${r.total}`, id: r.lesson.id })),
+    weak: reviews.map((r) => ({ title: r.lesson.title, score: `${r.correct}/${r.total}`, id: r.lesson.id })),
+    activity: profile.activity.filter((a) => a.type !== "email").slice(0, 5).map((a) => ({ when: fmtDateTime(a.ts), text: a.text })),
+    advice: advice.text,
+    adviceId: advice.lesson ? advice.lesson.id : "",
+    adviceAction: advice.lesson && advice.action ? `${advice.action}: ${advice.lesson.title}` : "Mở LearnMate",
+  };
+  return { subject: `[LearnMate] Báo cáo học tập của ${profile.name} (${from} – ${to})`, body, data };
 }
 
 function gmailUrl(to, msg) {
