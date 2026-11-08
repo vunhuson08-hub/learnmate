@@ -4,6 +4,7 @@ import { LEVELS, getSubject } from "../data/lessons.js";
 import { computeStats, nextLesson, reviewSuggestions, recentLessons, lessonScore, lessonStatus } from "../services/progress.js";
 import { objectiveLabel } from "./onboarding.js";
 import { esc, formatMinutes, timeAgo } from "../utils.js";
+import * as mailer from "../services/mailer.js";
 
 export const title = () => "Tổng quan";
 
@@ -36,6 +37,7 @@ export function render(root, { store }) {
       </div>
       ${stats.seeded ? `<div>${demoBadge("Có dữ liệu minh họa")}</div>` : ""}
     </div>
+    ${mailer.weeklyDue(p) ? mailer.weeklyBanner(p) : ""}
     ${stats.seeded ? `<p class="small muted" style="margin-top:-1rem;margin-bottom:1rem">Một phần số liệu bên dưới là <strong>dữ liệu minh họa</strong> được tạo sẵn cho chế độ dùng thử. Kết quả bạn tự làm sẽ được cộng thêm vào. Có thể xóa trong Hồ sơ.</p>` : ""}
 
     <section class="grid grid-4" aria-label="Chỉ số chính">
@@ -152,4 +154,9 @@ export function render(root, { store }) {
       </div>
     </div>
   </div>`;
+  root.querySelector("#weekly-later")?.addEventListener("click", () => {
+    store.updateProfile((pp) => { pp.notify.lastWeeklyAt = Date.now() - 5 * 86400000; }); // nhắc lại sau ~2 ngày
+    root.querySelector("#weekly-banner")?.remove();
+  });
+  mailer.syncReport(store); // giữ báo cáo trên máy chủ luôn mới để gửi hằng tuần
 }

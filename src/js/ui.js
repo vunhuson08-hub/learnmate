@@ -40,6 +40,7 @@ const ICONS = {
   bot: '<rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4"/><circle cx="9" cy="13.5" r="1"/><circle cx="15" cy="13.5" r="1"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
   filter: '<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   save: '<path d="M5 4h11l3 3v13H5V4Z"/><path d="M8 4v5h7V4"/><path d="M8 20v-6h8v6"/>',
 };
 

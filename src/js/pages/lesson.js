@@ -4,6 +4,7 @@ import { getLesson, getSubject, nextLessonAfter, LEVELS } from "../data/lessons.
 import { ensureLessonState, getLessonState, addActivity, addStudySeconds } from "../store.js";
 import { lessonScore } from "../services/progress.js";
 import { createTutor, QUICK_PROMPTS } from "../services/tutor.js";
+import * as mailer from "../services/mailer.js";
 import { esc, answersMatch, normalizeAnswer } from "../utils.js";
 
 export const title = (ctx) => getLesson(ctx.param)?.title || "Bài học";
@@ -363,7 +364,9 @@ export function render(root, { store, param, navigate }) {
         <a class="btn btn-ghost" href="#library">Về thư viện</a>
       </div>
       ${!next ? `<p class="small muted" style="margin-top:.75rem">Đây là bài cuối của môn ${esc(subject.name)}.</p>` : ""}
+      ${mailer.lessonMailBox(store.currentProfile(), lesson)}
     </article>`;
+    mailer.bindMailBox(main, { store, toast: toastFn, build: () => mailer.lessonResultEmail(store.currentProfile(), lesson), kind: "lesson", lessonId: lesson.id });
     main.querySelector("#btn-redo").addEventListener("click", () => {
       store.updateProfile((p) => {
         p.lessons[lesson.id] = { status: "in_progress", step: 0, questions: {}, completedAt: null, updatedAt: Date.now(), seeded: false };
@@ -388,6 +391,9 @@ export function render(root, { store, param, navigate }) {
         addActivity(p, { type: "lesson_complete", text: `Hoàn thành “${lesson.title}” – ${sc.correct}/${sc.total} câu đúng`, lessonId: lesson.id });
       });
       toastFn(`Hoàn thành bài “${lesson.title}”: ${sc.correct}/${sc.total} câu đúng.`, "success");
+      mailer.autoSendLesson(store, lesson).then((r) => {
+        if (r && r.ok && r.sent) toastFn(`Đã gửi kết quả tới ${mailer.recipient(store.currentProfile())}.`, "success");
+      });
     }
     return allDone;
   }

@@ -9,6 +9,11 @@ export const CONFIG = {
   tutorEndpoint: "/api/tutor",
   generatorProvider: "demo", // "demo" | "remote"
   generatorEndpoint: "/api/study-set",
+  // Thông báo email: "auto" = tự gửi qua máy chủ LearnMate nếu có (server/server.js),
+  // nếu không có máy chủ thì tự chuyển sang soạn thủ công (Gmail / ứng dụng email). "manual" = luôn thủ công.
+  notifyProvider: "auto",
+  notifyEndpoint: "/api/notify",
+  healthEndpoint: "/api/health",
   // Thời gian mô phỏng "đang trả lời" (ms) để trải nghiệm tự nhiên hơn.
   demoLatency: [600, 1100],
 };

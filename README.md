@@ -46,5 +46,30 @@ js/pages/*.js             Mỗi trang một module
 | Gia sư ảo | Phản hồi soạn sẵn theo từ khóa + ngữ cảnh bài/câu hỏi | Endpoint `/api/tutor` gọi mô hình AI (key ở máy chủ) |
 | Tạo bộ học tập | Lấy từ ngân hàng bài học hoặc khung mẫu | Endpoint `/api/study-set` |
 | Tiến độ | localStorage, một trình duyệt | Cơ sở dữ liệu theo người dùng |
+| Thông báo email | **Tự gửi** khi chạy cùng `server/` (Brevo + Postgres); nếu không có máy chủ thì soạn sẵn để gửi bằng Gmail | Xem mục bên dưới |
 
 Bật AI: đổi `tutorProvider` / `generatorProvider` trong `js/config.js` thành `"remote"` và dựng backend tương ứng. Không đặt API key trong frontend.
+
+
+## Thông báo qua email (tự động gửi)
+
+`server/server.js` (Node + Express) phục vụ `index.html` và API gửi email:
+
+- **Kết quả bài học**: gửi ngay khi học viên hoàn thành bài.
+- **Báo cáo quá trình học**: trình duyệt lưu bản báo cáo mới nhất lên máy chủ; máy chủ gửi hằng tuần (GitHub Actions gọi `/api/cron/weekly` lúc 19:00 Chủ nhật, giờ Việt Nam).
+- **Xác nhận email** trước khi gửi (chống gửi rác), có liên kết ngừng nhận trong mọi email, giới hạn 30 email/người/ngày.
+- Mỗi trình duyệt có một mã thiết bị bí mật; chỉ trình duyệt đó thay đổi được đăng ký của mình.
+
+Gửi qua **Brevo HTTP API** vì Render gói miễn phí chặn cổng SMTP.
+
+### Biến môi trường (Render → dịch vụ → Environment)
+
+| Biến | Ý nghĩa |
+|---|---|
+| `DATABASE_URL` | *Internal Database URL* của Postgres trên Render |
+| `BREVO_API_KEY` | Brevo → SMTP & API → API keys |
+| `SENDER_EMAIL` | Địa chỉ gửi đã xác minh trong Brevo → Senders |
+| `SENDER_NAME` | Tên người gửi, mặc định `LearnMate` |
+| `CRON_SECRET` | Chuỗi bí mật cho `/api/cron/weekly` (đặt giống secret trên GitHub) |
+
+Chạy thử cục bộ không gửi thật: `MAIL_DRY_RUN=1 DATABASE_URL=postgres://... npm start`, xem thư đã "gửi" tại `/api/dev/outbox`.

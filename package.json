@@ -1,0 +1,17 @@
+{
+  "name": "learnmate",
+  "version": "1.1.0",
+  "private": true,
+  "description": "LearnMate – gia sư học tập cá nhân, kèm máy chủ gửi email thông báo",
+  "main": "server/server.js",
+  "type": "commonjs",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "python3 build-single-file.py src index.html"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

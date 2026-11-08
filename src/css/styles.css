@@ -258,6 +258,16 @@ input[type="text"], input[type="email"], input[type="password"], input[type="sea
   width: 100%;
 }
 textarea { min-height: 80px; resize: vertical; }
+.mail-box { border: 1px solid var(--border, rgba(127,127,127,.25)); border-radius: 12px; padding: 1rem; margin-top: 1rem; }
+.mail-box h3 { margin: 0 0 .25rem; font-size: 1rem; display: flex; align-items: center; gap: .4rem; }
+.mail-box .icon { vertical-align: -3px; }
+.mail-preview { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; max-height: 280px; overflow: auto; padding: .75rem; border-radius: 8px; background: color-mix(in srgb, currentColor 6%, transparent); margin: .5rem 0 0; }
+.mail-box details summary { cursor: pointer; margin-top: .6rem; font-size: .875rem; }
+.notify-opts { display: grid; gap: .6rem; margin: .5rem 0 1rem; }
+.notify-opts label { display: flex; gap: .55rem; align-items: flex-start; }
+.notify-opts input[type="checkbox"] { margin-top: .25rem; width: 18px; height: 18px; flex: none; }
+.notify-status { padding: .6rem .8rem; border-radius: 10px; margin: 0 0 1rem; font-size: .9rem; }
+.notify-status .icon { vertical-align: -3px; }
 input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 45%, transparent); outline-offset: 0; border-color: var(--primary); }
 input[aria-invalid="true"] { border-color: var(--error); }
 .help { font-size: 0.85rem; color: var(--muted); margin: 0; }

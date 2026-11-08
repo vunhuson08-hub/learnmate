@@ -64,7 +64,13 @@ function defaultProfile({ id, name, email = null, isDemo = false }) {
     activity: [],
     studySets: [],
     chats: {},
+    notify: defaultNotify(email),
   };
+}
+
+function defaultNotify(email = null) {
+  // key: mã thiết bị bí mật dùng với máy chủ email; verified/subscribed: trạng thái lưu tạm từ máy chủ.
+  return { email: email || "", onLesson: true, weekly: true, lastWeeklyAt: 0, lastSentAt: 0, key: "", verified: false, subscribed: false };
 }
 
 const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
@@ -134,6 +140,19 @@ function sanitizeProfile(raw, id) {
     p.studySets = raw.studySets
       .filter((s) => isObj(s) && typeof s.id === "string" && Array.isArray(s.items) && ["mcq", "flashcard"].includes(s.kind))
       .slice(0, 30);
+  }
+  if (isObj(raw.notify)) {
+    const n = raw.notify;
+    p.notify = {
+      email: str(n.email).trim().slice(0, 120),
+      onLesson: n.onLesson !== false,
+      weekly: n.weekly !== false,
+      lastWeeklyAt: num(n.lastWeeklyAt),
+      lastSentAt: num(n.lastSentAt),
+      key: str(n.key).slice(0, 100),
+      verified: !!n.verified,
+      subscribed: !!n.subscribed,
+    };
   }
   if (isObj(raw.chats)) {
     for (const [lid, msgs] of Object.entries(raw.chats)) {
@@ -286,6 +305,7 @@ export function resetCurrentProfileData(seedFn) {
   const p = currentProfile();
   if (!p) return;
   const fresh = defaultProfile({ id: p.id, name: p.name, email: p.email, isDemo: p.isDemo });
+  if (p.notify) fresh.notify = { ...p.notify, lastWeeklyAt: 0, lastSentAt: 0 };
   if (seedFn && p.isDemo) seedFn(fresh);
   state.profiles[p.id] = fresh;
   save();

@@ -3,7 +3,8 @@ import { icon, field, setFieldError, alertBox } from "../ui.js";
 import { SUBJECTS, LEVELS } from "../data/lessons.js";
 import { OBJECTIVES } from "./onboarding.js";
 import { addActivity } from "../store.js";
-import { esc } from "../utils.js";
+import { esc, isValidEmail } from "../utils.js";
+import * as mailer from "../services/mailer.js";
 
 export const title = () => "Hồ sơ và cài đặt";
 
@@ -42,6 +43,19 @@ export function render(root, ctx) {
           <label><input type="radio" name="theme" value="dark" ${theme === "dark" ? "checked" : ""}/>${icon("moon", { size: 16 })}&nbsp;Tối</label>
         </div>
       </section>
+
+      <form class="card settings-section" id="notify-form" novalidate aria-labelledby="nt-title">
+        <h2 id="nt-title">${icon("mail")} Thông báo qua email</h2>
+        <p class="muted" id="nt-intro">Nhận kết quả bài học và báo cáo quá trình học tập qua email – cho bạn, phụ huynh hoặc giáo viên.</p>
+        <div id="nt-server" aria-live="polite"></div>
+        ${field({ id: "notifyEmail", label: "Email nhận thông báo", type: "email", autocomplete: "email", value: p.notify?.email || p.email || "", placeholder: "ban@vidu.com", help: "Có thể là email của bạn, phụ huynh hoặc giáo viên." })}
+        <div class="notify-opts" role="group" aria-label="Loại thông báo">
+          <label><input type="checkbox" id="nt-lesson" ${p.notify?.onLesson !== false ? "checked" : ""}/><span><strong>Kết quả sau mỗi bài học</strong><br><span class="small muted">Điểm, kết quả từng câu, câu cần xem lại – gửi ngay khi hoàn thành bài.</span></span></label>
+          <label><input type="checkbox" id="nt-weekly" ${p.notify?.weekly !== false ? "checked" : ""}/><span><strong>Báo cáo quá trình học hằng tuần</strong><br><span class="small muted">Tổng hợp tiến độ, thời gian học, chủ đề mạnh/cần ôn – gửi vào tối Chủ nhật.</span></span></label>
+        </div>
+        <p class="small muted" style="margin-top:0">${p.notify?.lastSentAt ? `Lần gửi gần nhất: ${new Date(p.notify.lastSentAt).toLocaleString("vi-VN")}` : "Chưa gửi email nào."}</p>
+        <div class="btn-row"><button type="submit" class="btn btn-primary">${icon("save")}Lưu cài đặt thông báo</button><a class="btn btn-secondary" href="#progress" data-report-focus>${icon("mail")}Gửi báo cáo ngay</a></div>
+      </form>
 
       <section class="card settings-section" aria-labelledby="dt-title">
         <h2 id="dt-title">Dữ liệu và quyền riêng tư</h2>
@@ -106,6 +120,81 @@ export function render(root, ctx) {
       });
       toast("Đã lưu hồ sơ và mục tiêu.", "success");
       rerender(); // cập nhật avatar trên thanh trên cùng
+    });
+
+    const nform = root.querySelector("#notify-form");
+    const ntServer = root.querySelector("#nt-server");
+    const showServer = (info, st, note = "") => {
+      if (!info) {
+        ntServer.innerHTML = `<p class="small muted notify-status" style="background:color-mix(in srgb, currentColor 5%, transparent)">${icon("info", { size: 16 })} Chế độ thủ công: phiên bản này không kết nối máy chủ gửi email, nên LearnMate soạn sẵn email để bạn bấm Gửi trong Gmail.</p>`;
+        return;
+      }
+      if (!info.mail) {
+        ntServer.innerHTML = `<p class="small notify-status alert-warning">${icon("alert", { size: 16 })} Máy chủ chưa được cấu hình dịch vụ gửi email. Tạm thời dùng cách gửi thủ công.</p>`;
+        return;
+      }
+      const s = st?.status || {};
+      const to = esc(mailer.recipient(store.currentProfile()));
+      if (s.verified) {
+        ntServer.innerHTML = `<p class="small notify-status alert-success">${icon("check", { size: 16 })} <strong>Tự động gửi đang bật</strong> tới <strong>${to}</strong>.${note} <button type="button" class="btn btn-ghost btn-sm" id="nt-off" style="min-height:28px">Ngừng nhận</button></p>`;
+      } else if (s.subscribed) {
+        ntServer.innerHTML = `<p class="small notify-status alert-info">${icon("mail", { size: 16 })} Đã gửi email xác nhận tới <strong>${to}</strong>. Mở hộp thư (kiểm tra cả mục Spam) và bấm liên kết để bật tự động gửi.${note} <button type="button" class="btn btn-ghost btn-sm" id="nt-resend" style="min-height:28px">Gửi lại email xác nhận</button> <button type="button" class="btn btn-ghost btn-sm" id="nt-check" style="min-height:28px">Tôi đã xác nhận</button></p>`;
+      } else {
+        ntServer.innerHTML = `<p class="small notify-status alert-info">${icon("info", { size: 16 })} Nhập email rồi bấm <strong>Lưu</strong>: LearnMate sẽ gửi một email xác nhận, sau đó tự động gửi kết quả và báo cáo.${note}</p>`;
+      }
+      ntServer.querySelector("#nt-resend")?.addEventListener("click", async (e) => {
+        e.target.disabled = true;
+        const r = await mailer.syncSubscription(store, { resend: true });
+        if (r && r.ok) toast("Đã gửi lại email xác nhận.", "success");
+        else toast((r && r.error) || "Không gửi được email xác nhận.", "error");
+        showServer(info, r && r.status ? r : st);
+      });
+      ntServer.querySelector("#nt-check")?.addEventListener("click", async () => {
+        const r = await mailer.fetchStatus(store);
+        showServer(info, r);
+        toast(r?.status?.verified ? "Đã xác nhận – email sẽ được gửi tự động." : "Chưa thấy xác nhận. Hãy bấm liên kết trong email.", r?.status?.verified ? "success" : "info");
+      });
+      ntServer.querySelector("#nt-off")?.addEventListener("click", async () => {
+        await mailer.unsubscribe(store);
+        toast("Đã ngừng gửi email tự động.", "info");
+        showServer(info, { status: { subscribed: false, verified: false } });
+      });
+    };
+    mailer.serverInfo().then(async (info) => {
+      if (!nform.isConnected) return;
+      showServer(info, info && info.mail ? await mailer.fetchStatus(store) : null);
+    });
+
+    nform.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const em = nform.querySelector("#notifyEmail").value.trim().toLowerCase();
+      if (em && !isValidEmail(em)) {
+        setFieldError(nform, "notifyEmail", "Email chưa đúng định dạng, ví dụ: ban@vidu.com");
+        nform.querySelector("#notifyEmail").focus();
+        return;
+      }
+      setFieldError(nform, "notifyEmail", "");
+      const oldEmail = mailer.recipient(store.currentProfile());
+      const wasSubscribed = !!store.currentProfile().notify?.subscribed;
+      store.updateProfile((pp) => {
+        pp.notify = { ...(pp.notify || {}), email: em, onLesson: nform.querySelector("#nt-lesson").checked, weekly: nform.querySelector("#nt-weekly").checked };
+        if (em !== oldEmail) { pp.notify.verified = false; pp.notify.subscribed = false; }
+      });
+      const info = await mailer.serverInfo();
+      if (!info || !info.mail) {
+        toast(em ? `Đã lưu. Email sẽ được soạn sẵn gửi tới ${em}.` : "Đã lưu. Hãy nhập email để nhận thông báo.", "success");
+        return;
+      }
+      if (wasSubscribed && oldEmail && em !== oldEmail) await mailer.unsubscribe(store, oldEmail);
+      if (!em) { toast("Đã lưu. Hãy nhập email để nhận thông báo.", "info"); showServer(info, null); return; }
+      const r = await mailer.syncSubscription(store);
+      if (!r || !r.ok) {
+        toast((r && r.error) || "Không kết nối được máy chủ email.", "error");
+        if (r && r.status) showServer(info, r);
+        return;
+      }
+      toast(r.status?.verified ? "Đã lưu cài đặt thông báo." : r.verificationSent ? `Đã gửi email xác nhận tới ${em}.` : "Đã lưu. Đang chờ bạn xác nhận email.", "success");
+      showServer(info, r);
     });
 
     root.querySelectorAll('input[name="theme"]').forEach((r) =>

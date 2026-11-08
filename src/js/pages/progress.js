@@ -3,10 +3,11 @@ import { icon, demoBadge, progressBar, emptyState, subjectIcon } from "../ui.js"
 import { getSubject } from "../data/lessons.js";
 import { computeStats, nextStepAdvice, reviewSuggestions } from "../services/progress.js";
 import { esc, formatMinutes } from "../utils.js";
+import * as mailer from "../services/mailer.js";
 
 export const title = () => "Tiến độ";
 
-export function render(root, { store }) {
+export function render(root, { store, toast }) {
   const p = store.currentProfile();
   const s = computeStats(p);
   const advice = nextStepAdvice(p);
@@ -20,7 +21,7 @@ export function render(root, { store }) {
   <div class="page">
     <div class="page-header">
       <div><h1>Tiến độ học tập</h1><p>Theo dõi kết quả và biết nên ôn phần nào tiếp theo.</p></div>
-      ${s.seeded ? demoBadge("Bao gồm dữ liệu minh họa") : ""}
+      <div class="row" style="gap:.5rem">${s.seeded ? demoBadge("Bao gồm dữ liệu minh họa") : ""}<button type="button" class="btn btn-secondary btn-sm" id="goto-mail">${icon("mail", { size: 16 })}Gửi báo cáo qua email</button></div>
     </div>
     ${s.seeded ? `<div style="margin-bottom:1rem">${demoBadge()} <span class="small muted">Các số liệu dưới đây gộp cả dữ liệu minh họa của chế độ dùng thử và kết quả bạn tự làm. Phần minh họa không phản ánh kết quả thật.</span></div>` : ""}
 
@@ -90,5 +91,18 @@ export function render(root, { store }) {
         }
       </section>
     </div>
+
+    <section class="card" id="report-mail" style="margin-top:1rem" aria-labelledby="rm-title">
+      <div class="card-header"><h2 id="rm-title">${icon("mail")} Báo cáo học tập qua email</h2></div>
+      <p class="muted" style="margin:0">Tổng hợp tiến độ lộ trình, tỷ lệ đúng, thời gian học 7 ngày, chủ đề mạnh/cần ôn và đề xuất bước tiếp theo.</p>
+      ${mailer.reportMailBox(p)}
+    </section>
   </div>`;
+  mailer.bindMailBox(root, { store, toast, build: () => mailer.progressReportEmail(store.currentProfile()), kind: "report" });
+  mailer.syncReport(store);
+  const mailSec = root.querySelector("#report-mail");
+  root.querySelector("#goto-mail").addEventListener("click", () => {
+    mailSec.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  if (mailer.consumeReportFocus()) setTimeout(() => mailSec.scrollIntoView({ block: "start" }), 0);
 }
