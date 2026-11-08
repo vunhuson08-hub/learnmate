@@ -351,11 +351,13 @@ app.get("/api/notify/unsubscribe", wrap(async (req, res) => {
 
 // Gọi hằng tuần (GitHub Actions hoặc Render Cron) với header x-cron-secret.
 app.post("/api/cron/weekly", wrap(async (req, res) => {
-  const secret = process.env.CRON_SECRET;
+  // An toàn khi gọi công khai: chỉ gửi cho người đã đến hạn (tối đa 1 báo cáo/tuần/người).
+  // Có CRON_SECRET đúng thì bỏ qua giới hạn tần suất.
+  const secret = process.env.CRON_SECRET || "";
   const given = String(req.get("x-cron-secret") || "");
-  if (!secret || given.length !== secret.length || !crypto.timingSafeEqual(Buffer.from(given), Buffer.from(secret))) {
-    return res.status(401).json({ ok: false });
-  }
+  const trusted = secret && given.length === secret.length && crypto.timingSafeEqual(Buffer.from(given), Buffer.from(secret));
+  if (!trusted && rateLimited("cron-public", 1, 10 * 60 * 1000)) return res.status(429).json({ ok: false, error: "Thử lại sau." });
+  if (!dbReady) return res.status(503).json({ ok: false, error: "Chưa cấu hình cơ sở dữ liệu." });
   res.json({ ok: true, ...(await runWeekly()) });
 }));
 

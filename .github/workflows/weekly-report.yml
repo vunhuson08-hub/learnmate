@@ -1,20 +1,21 @@
 # Gửi báo cáo học tập hằng tuần: 19:00 Chủ nhật giờ Việt Nam (12:00 UTC).
-# Cần 2 secret trong Settings → Secrets and variables → Actions:
-#   APP_URL      Địa chỉ máy chủ LearnMate trên Render, ví dụ https://learnmate-app.onrender.com
-#   CRON_SECRET  Giống biến CRON_SECRET của dịch vụ trên Render
+# Endpoint chỉ gửi cho người đã đến hạn nên gọi công khai vẫn an toàn.
+# (Tùy chọn) secret CRON_SECRET giống biến trên Render để bỏ qua giới hạn tần suất.
 name: Báo cáo học tập hằng tuần
 on:
   schedule:
     - cron: "0 12 * * 0"
   workflow_dispatch: {}
+env:
+  APP_URL: https://learnmate-app.onrender.com
 jobs:
   send:
     runs-on: ubuntu-latest
     steps:
       - name: Đánh thức máy chủ (gói miễn phí ngủ khi không có truy cập)
-        run: curl -fsS --retry 5 --retry-delay 15 --retry-all-errors --max-time 90 "${{ secrets.APP_URL }}/api/health"
+        run: curl -fsS --retry 5 --retry-delay 15 --retry-all-errors --max-time 90 "${{ env.APP_URL }}/api/health"
       - name: Gửi báo cáo tuần
         run: |
           curl -fsS --retry 3 --retry-delay 20 --retry-all-errors --max-time 120 \
             -X POST -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
-            "${{ secrets.APP_URL }}/api/cron/weekly"
+            "${{ env.APP_URL }}/api/cron/weekly"
