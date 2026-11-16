@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Zh0os3zNG0ss8jGyqeuIliZ0YcLMOWaNKHEBt8ylgUU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FGqE24inLzSDcnAbFVXEQeuM8WVF04d4qjfoC9nsYaM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; manifest-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sổ nhân sự Lễ Tân NEU</title>
@@ -98,6 +98,9 @@ main{padding:24px 32px 48px;max-width:1264px;width:100%;outline:none}
 .khoi{background:var(--be-mat);border:1px solid var(--vien);border-radius:12px;padding:20px;min-width:0}
 .khoi>h2{margin-bottom:12px}
 .luoi2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.cot{display:flex;flex-direction:column;gap:20px;min-width:0}
+.chi-dt,.td-ngan{display:none}
+#tieu-de:focus,main:focus{outline:none}
 label,.nhan{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
 input,select,textarea{font:inherit;font-size:15px;color:var(--chu);background-color:var(--be-mat);border:1px solid var(--vien);border-radius:8px;min-height:44px;padding:8px 12px;width:100%}
 textarea{min-height:88px;resize:vertical}
@@ -182,6 +185,7 @@ dl.tt-hs dd{margin:2px 0 0;font-weight:600}
 .sk:hover{border-color:var(--chu-phu)}
 .sk .ten{font-weight:600;font-size:16px}
 .sk .thuoc{grid-column:1/-1}
+.sk-so{text-align:right;white-space:nowrap}
 .sap{font-size:12px;font-weight:600;color:var(--mau-chinh);border:1px solid var(--mau-chinh);border-radius:3px;padding:2px 6px;margin-left:6px;white-space:nowrap}
 /* điểm danh */
 .dd-dau{position:sticky;top:var(--cao-top);z-index:5;background:var(--nen);padding:10px 0;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--vien)}
@@ -282,7 +286,37 @@ dialog::backdrop{background:rgb(15 10 12 / .45)}
   .dd-dong{grid-template-columns:auto minmax(0,1fr)}
   .dd-nut{grid-column:1/-1}
   .nut-dd{flex:1;min-width:96px}
-  .diem{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .an-dt{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .chi-dt{display:block}
+  .td-ngan{display:inline}
+  .top h1{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .khoi{padding:16px}
+  .nut.nho{min-height:44px}
+  .nut-ic{padding:6px 11px}
+  /* tổng quan: số nhanh và nút điểm danh lên đầu */
+  .tq{display:flex;flex-direction:column}
+  .tq>.cot{display:contents}
+  .tq-nhanh{order:-1}
+  .tq-nhanh>.nut{flex:1 1 100%}
+  .bang-gon th,.bang-gon td{padding:10px 6px;font-size:15px}
+  /* thành viên: ô tìm và nút thêm chung một hàng */
+  .cong-cu>.hang:first-child{flex-wrap:nowrap}
+  .cong-cu>.hang:first-child .tim{flex:1 1 auto}
+  /* sự kiện: một cột, số liệu xuống dưới tên */
+  .sk{grid-template-columns:minmax(0,1fr);padding:14px}
+  .sk-so{text-align:left;white-space:normal;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+  /* điểm danh: hàng nút gọn một dòng */
+  .dd-tac{flex-wrap:nowrap;gap:6px}
+  /* hồ sơ */
+  .hs-nut{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}
+  .diem{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .hs-nut .nut{padding:8px 10px;white-space:nowrap}
+  .diem>div{padding:10px}
+  .diem .phu{font-size:15px;white-space:nowrap}
+  .diem .so-lon{font-size:24px}
+  .ds-hs>li{flex-wrap:wrap;gap:6px 12px}
+  .ds-hs .giua{flex:1 1 100%}
+  .ds-hs>li>.so{margin-left:auto}
   .chon{flex:1 1 140px}
   .dem{gap:4px 14px}
   dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:16px 16px 0 0;max-height:92dvh}
@@ -353,7 +387,7 @@ dialog::backdrop{background:rgb(15 10 12 / .45)}
         <div class="cong-cu">
           <div class="hang">
             <div class="tim"><label class="an" for="tv-tim">Tìm thành viên</label><svg class="ic" aria-hidden="true"><use href="#i-tim"/></svg><input id="tv-tim" type="search" placeholder="Tìm tên hoặc mã SV…" autocomplete="off" spellcheck="false" maxlength="60" enterkeyhint="search"></div>
-            <button class="nut chinh" id="nut-them" type="button"><svg class="ic" aria-hidden="true"><use href="#i-cong"/></svg>Thêm thành viên</button>
+            <button class="nut chinh" id="nut-them" type="button"><svg class="ic" aria-hidden="true"><use href="#i-cong"/></svg>Thêm<span class="an-dt"> thành viên</span></button>
           </div>
           <div class="cuon-ngang" role="group" aria-label="Lọc theo gen" id="tv-gen"></div>
           <div class="hang">
@@ -644,13 +678,15 @@ function capNhatKy(){$$(".ky-chu").forEach(function(e){e.textContent=S.ky;});$("
 
 /* ---------- điều hướng ---------- */
 var TIEU_DE={"tong-quan":"Tổng quan","thanh-vien":"Thành viên","ho-so":"Hồ sơ thành viên","su-kien":"Sự kiện & điểm danh","diem-danh":"Điểm danh","nhap-xuat":"Nhập/Xuất dữ liệu","cai-dat":"Cài đặt"};
+/* Tên ngắn cho thanh đầu trang trên điện thoại; trình đọc màn hình vẫn đọc tên đầy đủ. */
+var TD_NGAN={"su-kien":"Sự kiện","nhap-xuat":"Nhập/Xuất","ho-so":"Hồ sơ"};
 var NAV={"ho-so":"thanh-vien","diem-danh":"su-kien"},daTai=false,lanDau=true;
 function dieuHuong(){
   if(!daTai)return;
   var p=(location.hash||"").replace(/^#\/?/,"").split("/"),v=TIEU_DE[p[0]]?p[0]:"tong-quan",arg="";try{arg=p[1]?decodeURIComponent(p[1]):"";}catch(er){arg="";}
   $$(".man").forEach(function(s){s.hidden=true;s.classList.remove("vao");});
   var sec=$("#v-"+v);sec.hidden=false;void sec.offsetWidth;sec.classList.add("vao");
-  $("#tieu-de").textContent=TIEU_DE[v];document.title=TIEU_DE[v]+" | Sổ nhân sự Lễ Tân NEU";
+  var td=xoa($("#tieu-de")),ngan=TD_NGAN[v];if(ngan){td.appendChild(h("span",{class:"an-dt"},TIEU_DE[v]));td.appendChild(h("span",{class:"td-ngan","aria-hidden":"true"},ngan));}else td.textContent=TIEU_DE[v];document.title=TIEU_DE[v]+" | Sổ nhân sự Lễ Tân NEU";
   $$("[data-nav]").forEach(function(a){if(a.dataset.nav===(NAV[v]||v))a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
   ({"tong-quan":veTongQuan,"thanh-vien":veThanhVien,"ho-so":veHoSo,"su-kien":veSuKien,"diem-danh":veDiemDanh,"nhap-xuat":veNhapXuat,"cai-dat":veCaiDat})[v](arg);
   window.scrollTo(0,0);if(!lanDau)$("#tieu-de").focus({preventScroll:true});lanDau=false;
@@ -670,12 +706,12 @@ function veTongQuan(){
   var itNhat=hoat.slice().sort(function(a,b){return d[a.maSV].tg-d[b.maSV].tg||soSanhTen(a,b);}).slice(0,10);
   var ol=h("ol",{class:"ds"});itNhat.forEach(function(m){ol.appendChild(h("li",null,h("span",{class:"av","aria-hidden":"true"},chuDau(m.hoTen)),h("div",{class:"giua"},h("a",{class:"ten",href:"#/ho-so/"+encodeURIComponent(m.maSV)},m.hoTen),h("div",{class:"hang"},genNhan(m.gen),h("span",{class:"phu"},m.ban))),h("span",{class:"so",style:"font-weight:600;white-space:nowrap"},nf.format(d[m.maSV].tg)+" lần")));});
   var it=h("div",{class:"khoi"},h("h2",null,"10 người tham gia ít nhất"),h("p",{class:"phu",style:"margin:-6px 0 8px"},"Đếm số lần có mặt trong kỳ, chỉ người đang hoạt động. Nhắc họ trước sự kiện tới."),itNhat.length?ol:h("p",{class:"phu"},"Chưa có thành viên đang hoạt động."));
-  var bang=h("table",null,h("caption",{class:"an"},"Số thành viên đang hoạt động theo gen và ban"),h("thead",null,h("tr",null,h("th",{scope:"col"},"Ban"),GENS.map(function(g){return h("th",{scope:"col",class:"s"},"Gen "+g);}),h("th",{scope:"col",class:"s"},"Tổng"))));
+  var bang=h("table",null,h("caption",{class:"an"},"Số thành viên đang hoạt động theo gen và ban"),h("thead",null,h("tr",null,h("th",{scope:"col"},"Ban"),GENS.map(function(g){return h("th",{scope:"col",class:"s"},h("span",{class:"an-dt"},"Gen "),g);}),h("th",{scope:"col",class:"s"},"Tổng"))));
   var tb=h("tbody");BANS.concat(["Tổng"]).forEach(function(b){var tong=0,tr=h("tr",null,h("th",{scope:"row",style:"position:static;color:var(--chu)"},b));GENS.forEach(function(g){var n=hoat.filter(function(m){return m.gen===g&&(b==="Tổng"||m.ban===b);}).length;tong+=n;tr.appendChild(h("td",{class:"s"},nf.format(n)));});tr.appendChild(h("td",{class:"s",style:"font-weight:700"},nf.format(tong)));tb.appendChild(tr);});bang.appendChild(tb);
-  var phai=h("div",{style:"display:flex;flex-direction:column;gap:20px;min-width:0"},
-    h("div",{class:"khoi hang",style:"gap:24px"},h("div",null,h("p",{class:"phu"},"Sự kiện tháng "+thangF.format(new Date())),h("p",{class:"so-lon"},nf.format(trongThang))),h("div",null,h("p",{class:"phu"},"Đang hoạt động"),h("p",{class:"so-lon"},nf.format(hoat.length))),h("a",{class:"nut",href:"#/su-kien",style:"margin-left:auto"},"Mở điểm danh")),
-    h("div",{class:"khoi"},h("h2",null,"Thành viên theo gen và ban"),h("div",{class:"bang-boc bang-gon",style:"border:0"},bang)));
-  el.appendChild(h("div",{class:"luoi2"},h("div",{style:"display:flex;flex-direction:column;gap:20px;min-width:0"},tiLe,it),phai));
+  var phai=h("div",{class:"cot"},
+    h("div",{class:"khoi hang tq-nhanh",style:"gap:24px"},h("div",null,h("p",{class:"phu"},"Sự kiện tháng "+thangF.format(new Date())),h("p",{class:"so-lon"},nf.format(trongThang))),h("div",null,h("p",{class:"phu"},"Đang hoạt động"),h("p",{class:"so-lon"},nf.format(hoat.length))),h("a",{class:"nut",href:"#/su-kien",style:"margin-left:auto"},"Mở điểm danh")),
+    h("div",{class:"khoi"},h("h2",null,"Thành viên theo gen và ban"),h("p",{class:"phu chi-dt",style:"margin:-6px 0 4px"},"Cột số là gen 7, 8, 9, 10."),h("div",{class:"bang-boc bang-gon",style:"border:0"},bang)));
+  el.appendChild(h("div",{class:"luoi2 tq"},h("div",{class:"cot"},tiLe,it),phai));
 }
 
 /* ---------- Thành viên ---------- */
@@ -695,7 +731,7 @@ function veDsTV(){
   if(!n){kq.appendChild(h("div",{class:"trong khoi"},h("strong",null,L.q?"Không ai khớp “"+L.q+"”":"Không có ai trong bộ lọc này"),h("p",null,"Thử gõ mã sinh viên, gõ không dấu, hoặc bỏ bớt bộ lọc gen, ban, trạng thái."),h("button",{class:"nut",type:"button",id:"bo-loc"},"Bỏ mọi bộ lọc")));xoa($("#tv-trang"));return;}
   var tb=h("tbody");trang.forEach(function(m){var x=d[m.maSV];tb.appendChild(h("tr",null,h("td",null,h("div",{class:"ten-o"},h("span",{class:"av","aria-hidden":"true"},chuDau(m.hoTen)),h("a",{href:"#/ho-so/"+encodeURIComponent(m.maSV)},m.hoTen),m.trangThai===NGHI?h("span",{class:"nghi"},"Đã nghỉ"):null)),h("td",null,h("span",{class:"ma"},m.maSV)),h("td",null,genNhan(m.gen)),h("td",null,m.ban),h("td",{class:"s"},nf.format(x.tg)),h("td",{class:"s"},nf.format(x.doan)),h("td",{class:"s"},nf.format(x.rl))));});
   kq.appendChild(h("div",{class:"bang-boc bang-tv"},h("table",null,h("caption",{class:"an"},"Danh sách thành viên, bấm tiêu đề cột số để sắp xếp"),h("thead",null,h("tr",null,h("th",{scope:"col","aria-sort":L.xep==="ten"?"ascending":null},h("button",{type:"button","data-xep":"ten"},"Họ tên")),h("th",{scope:"col"},"Mã SV"),h("th",{scope:"col"},"Gen"),h("th",{scope:"col"},"Ban"),cotSX("Tham gia","tg"),cotSX("Điểm đoàn","doan"),cotSX("Rèn luyện","rl"))),tb)));
-  var ul=h("ul",{class:"the-ds"});trang.forEach(function(m){var x=d[m.maSV];ul.appendChild(h("li",null,h("a",{class:"the",href:"#/ho-so/"+encodeURIComponent(m.maSV)},h("span",{class:"av","aria-hidden":"true"},chuDau(m.hoTen)),h("div",{style:"flex:1;min-width:0"},h("div",{class:"hang",style:"justify-content:space-between"},h("span",{class:"ten"},m.hoTen),genNhan(m.gen)),h("div",{class:"dong2"},h("span",{class:"ma"},m.maSV),h("span",{class:"phu"},m.ban),m.trangThai===NGHI?h("span",{class:"nghi"},"Đã nghỉ"):null),h("div",{class:"dong2 so"},h("span",null,"Đoàn "+nf.format(x.doan)),h("span",null,"Rèn luyện "+nf.format(x.rl)),h("span",{class:"phu"},nf.format(x.tg)+" lần tham gia"))))));});
+  var ul=h("ul",{class:"the-ds"});trang.forEach(function(m){var x=d[m.maSV];ul.appendChild(h("li",null,h("a",{class:"the",href:"#/ho-so/"+encodeURIComponent(m.maSV)},h("span",{class:"av","aria-hidden":"true"},chuDau(m.hoTen)),h("div",{style:"flex:1;min-width:0"},h("div",{class:"hang",style:"justify-content:space-between"},h("span",{class:"ten"},m.hoTen),genNhan(m.gen)),h("div",{class:"dong2"},h("span",{class:"ma"},m.maSV),h("span",{class:"phu"},m.ban),m.trangThai===NGHI?h("span",{class:"nghi"},"Đã nghỉ"):null),h("div",{class:"dong2 so"},h("span",null,"Đoàn "+nf.format(x.doan)),h("span",null,"RL "+nf.format(x.rl)),h("span",{class:"phu"},nf.format(x.tg)+" lần tham gia"))))));});
   kq.appendChild(ul);
   var tr=xoa($("#tv-trang"));tr.appendChild(h("span",{class:"phu so"},nf.format(dau+1)+"–"+nf.format(dau+trang.length)+" trên "+nf.format(n)));
   tr.appendChild(h("button",{type:"button",class:"nut nho",id:"tr-truoc",disabled:L.trang===0},ic("truoc"),"Trước"));tr.appendChild(h("button",{type:"button",class:"nut nho",id:"tr-sau",disabled:L.trang>=so-1},"Sau",ic("sau")));
@@ -742,14 +778,14 @@ function veHoSo(ma){hsMa=ma;var el=xoa($("#v-ho-so")),m=TV[ma];
   el.appendChild(h("a",{class:"lui",href:"#/thanh-vien"},ic("truoc"),"Thành viên"));
   el.appendChild(h("div",{class:"khoi",style:"display:flex;flex-direction:column;gap:18px"},
     h("div",{class:"hs-dau"},h("span",{class:"av lon","aria-hidden":"true"},chuDau(m.hoTen)),h("div",{style:"flex:1;min-width:0"},h("h2",null,m.hoTen),h("div",{class:"hang",style:"margin-top:6px"},genNhan(m.gen),h("span",{class:"phu"},"Ban "+m.ban),m.trangThai===NGHI?h("span",{class:"nghi"},"Đã nghỉ"):h("span",{class:"tt tt-co"},HOAT))),
-      h("div",{class:"hang"},h("button",{class:"nut",type:"button",id:"hs-sua"},ic("sua"),"Sửa hồ sơ"),h("button",{class:"nut chinh",type:"button",id:"hs-diem"},ic("cong"),"Cộng/trừ điểm"))),
+      h("div",{class:"hang hs-nut"},h("button",{class:"nut",type:"button",id:"hs-sua"},ic("sua"),"Sửa hồ sơ"),h("button",{class:"nut chinh",type:"button",id:"hs-diem"},ic("cong"),"Cộng/trừ điểm"))),
     h("dl",{class:"tt-hs"},h("div",null,h("dt",null,"Mã sinh viên"),h("dd",{class:"ma",style:"font-size:16px;color:var(--chu)"},m.maSV)),h("div",null,h("dt",null,"Gmail"),h("dd",null,m.gmail?h("a",{href:"mailto:"+m.gmail},m.gmail):"Chưa có")),h("div",null,h("dt",null,"Số điện thoại"),h("dd",{class:"ma",style:"font-size:16px;color:var(--chu)"},m.sdt?h("a",{href:"tel:"+m.sdt},m.sdt):"Chưa có"))),
-    h("div",{class:"diem"},h("div",null,h("p",{class:"phu"},"Điểm đoàn "+S.ky),h("p",{class:"so-lon"},nf.format(x.doan))),h("div",null,h("p",{class:"phu"},"Điểm rèn luyện"),h("p",{class:"so-lon"},nf.format(x.rl))),h("div",null,h("p",{class:"phu"},"Lần có mặt trong kỳ"),h("p",{class:"so-lon"},nf.format(x.tg))))));
+    h("div",null,h("p",{class:"phu",style:"margin-bottom:8px"},"Điểm trong "+S.ky),h("div",{class:"diem"},h("div",null,h("p",{class:"phu"},"Điểm đoàn"),h("p",{class:"so-lon"},nf.format(x.doan))),h("div",null,h("p",{class:"phu"},"Rèn luyện"),h("p",{class:"so-lon"},nf.format(x.rl))),h("div",null,h("p",{class:"phu"},"Lần có mặt"),h("p",{class:"so-lon"},nf.format(x.tg)))))));
   var ls=S.sk.filter(function(e){return DD[e.id]&&DD[e.id][ma];}).sort(function(a,b){return (b.ngay||"").localeCompare(a.ngay||"");});
-  var ul=h("ul",{class:"ds"});ls.forEach(function(e){var r=DD[e.id][ma],xong=daXong(e),dd=r.tt==="co"?[+e.doanCong,+e.rlCong]:r.tt==="vang"?[-e.doanTru,-e.rlTru]:[0,0];
+  var ul=h("ul",{class:"ds ds-hs"});ls.forEach(function(e){var r=DD[e.id][ma],xong=daXong(e),dd=r.tt==="co"?[+e.doanCong,+e.rlCong]:r.tt==="vang"?[-e.doanTru,-e.rlTru]:[0,0];
     ul.appendChild(h("li",null,h("div",{class:"giua"},h("a",{class:"ten",href:"#/diem-danh/"+encodeURIComponent(e.id)},e.ten),h("p",{class:"phu"},fNgay(e.ngay)+(r.vaiTro?", vai trò "+r.vaiTro:"")+(e.ky!==S.ky?", "+e.ky:""))),h("span",{class:"tt tt-"+r.tt},TT_TEN[r.tt]),h("span",{class:"so phu",style:"min-width:96px;text-align:right"},xong?"Đoàn "+nfd.format(dd[0])+", RL "+nfd.format(dd[1]):"Chờ kết thúc")));});
   el.appendChild(h("div",{class:"khoi"},h("h2",null,"Sự kiện tham gia"),ls.length?ul:h("p",{class:"phu"},"Chưa tham gia sự kiện nào. Thêm người vào sự kiện ở mục Sự kiện & điểm danh.")));
-  var dcs=S.dc.filter(function(d){return d.maSV===ma;}).sort(function(a,b){return String(b.thoiGian).localeCompare(String(a.thoiGian));}),ul2=h("ul",{class:"ds"});
+  var dcs=S.dc.filter(function(d){return d.maSV===ma;}).sort(function(a,b){return String(b.thoiGian).localeCompare(String(a.thoiGian));}),ul2=h("ul",{class:"ds ds-hs"});
   dcs.forEach(function(d){ul2.appendChild(h("li",null,h("div",{class:"giua"},h("p",{style:"font-weight:600"},d.lyDo),h("p",{class:"phu"},fNgay(String(d.thoiGian).slice(0,10))+(d.nguoi?", ghi bởi "+d.nguoi:"")+(d.ky!==S.ky?", "+d.ky:""))),h("span",{class:"so",style:"font-weight:600;white-space:nowrap"},"Đoàn "+nfd.format(+d.doan)+", RL "+nfd.format(+d.rl))));});
   el.appendChild(h("div",{class:"khoi"},h("h2",null,"Cộng/trừ điểm tay"),dcs.length?ul2:h("p",{class:"phu"},"Chưa có lần cộng/trừ tay nào.")));
 }
@@ -772,7 +808,7 @@ function veSuKien(){var el=xoa($("#v-su-kien")),hn=homNay();if(!kyXem)kyXem=S.ky
   var ul=h("ul",{class:"sk-ds"});ds.forEach(function(e){var c=demSK(e);
     ul.appendChild(h("li",null,h("a",{class:"sk",href:"#/diem-danh/"+encodeURIComponent(e.id)},
       h("div",{style:"min-width:0"},h("span",{class:"ten"},e.ten),daXong(e)?h("span",{class:"tt tt-xong",style:"margin-left:6px"},SK_XONG):e.ngay>hn?h("span",{class:"sap"},"Sắp diễn ra"):h("span",{class:"tt tt-mo",style:"margin-left:6px"},SK_MO),h("p",{class:"phu"},fNgay(e.ngay)+(e.diaDiem?", "+e.diaDiem:"")+". "+doiTuong(e)),h("p",{class:"phu so"},"Có mặt: đoàn +"+nf.format(+e.doanCong)+", RL +"+nf.format(+e.rlCong)+". Vắng: đoàn −"+nf.format(+e.doanTru)+", RL −"+nf.format(+e.rlTru))),
-      h("div",{class:"so",style:"text-align:right;white-space:nowrap"},h("strong",null,nf.format(c.co)+"/"+nf.format(c.tong)),h("p",{class:"phu"},daXong(e)?"Đã cộng điểm":(+e.soLuong?nf.format(c.tong)+"/"+nf.format(+e.soLuong)+" người tham gia":nf.format(c.tong)+" người tham gia")+(!daXong(e)&&c.chua&&c.tong?", "+nf.format(c.chua)+" chưa điểm danh":""))),thuoc(c,true))));});
+      h("div",{class:"so sk-so"},h("strong",null,nf.format(c.co)+"/"+nf.format(c.tong)+" có mặt"),h("p",{class:"phu"},daXong(e)?"Đã cộng điểm":(+e.soLuong?nf.format(c.tong)+"/"+nf.format(+e.soLuong)+" người tham gia":nf.format(c.tong)+" người tham gia")+(!daXong(e)&&c.chua&&c.tong?", "+nf.format(c.chua)+" chưa điểm danh":""))),thuoc(c,true))));});
   el.appendChild(ul);}
 $("#v-su-kien").addEventListener("change",function(e){if(e.target.id==="sk-ky"){kyXem=e.target.value;veSuKien();$("#sk-ky").focus();}});
 $("#v-su-kien").addEventListener("click",function(e){if(e.target.closest("#nut-tao-sk"))moFormSK(null);});
@@ -881,10 +917,10 @@ function veDiemDanh(id){var el=xoa($("#v-diem-danh")),e=skTheoId(id);
   if(D.id!==id)D={id:id,q:"",gen:"",ban:"",chua:false,max:60,tq:""};
   var xong=daXong(e);
   var gs=h("select",{id:"dd-gen"},h("option",{value:""},"Mọi gen")),bs=h("select",{id:"dd-ban"},h("option",{value:""},"Mọi ban"));GENS.forEach(function(g){gs.appendChild(h("option",{value:g,selected:D.gen===g},"Gen "+g));});BANS.forEach(function(b){bs.appendChild(h("option",{value:b,selected:D.ban===b},b));});
-  el.appendChild(h("div",{class:"hang"},h("a",{class:"lui",href:"#/su-kien"},ic("truoc"),"Sự kiện"),h("span",{class:"gian"}),
-    xong?null:h("button",{class:"nut nho",type:"button",id:"dd-sua"},ic("sua"),"Sửa sự kiện"),
-    h("button",{class:"nut nho",type:"button",id:"dd-xuat"},ic("xuong"),"Xuất danh sách"),
-    xong?h("button",{class:"nut nho",type:"button",id:"dd-mo-lai"},"Mở lại sự kiện"):h("button",{class:"nut chinh nho",type:"button",id:"dd-ket-thuc"},"Kết thúc sự kiện")));
+  el.appendChild(h("div",{class:"hang dd-tac"},h("a",{class:"lui",href:"#/su-kien"},ic("truoc"),"Sự kiện"),h("span",{class:"gian"}),
+    xong?null:h("button",{class:"nut nho nut-ic",type:"button",id:"dd-sua"},ic("sua"),h("span",{class:"an-dt"},"Sửa sự kiện")),
+    h("button",{class:"nut nho nut-ic",type:"button",id:"dd-xuat"},ic("xuong"),h("span",{class:"an-dt"},"Xuất danh sách")),
+    xong?h("button",{class:"nut nho",type:"button",id:"dd-mo-lai"},"Mở lại sự kiện"):h("button",{class:"nut chinh nho",type:"button",id:"dd-ket-thuc"},"Kết thúc",h("span",{class:"an-dt"}," sự kiện"))));
   el.appendChild(h("div",null,h("div",{class:"hang"},h("h2",{style:"font-size:20px"},e.ten),h("span",{class:"tt "+(xong?"tt-xong":"tt-mo")},xong?SK_XONG:SK_MO)),
     h("p",{class:"phu"},fNgay(e.ngay)+(e.diaDiem?", "+e.diaDiem:"")+". Có mặt: đoàn +"+nf.format(+e.doanCong)+", RL +"+nf.format(+e.rlCong)+"; vắng: đoàn −"+nf.format(+e.doanTru)+", RL −"+nf.format(+e.rlTru)+"."),
     h("p",{class:"phu"},xong?"Đã kết thúc"+(e.ketThucLuc?" ngày "+fNgay(String(e.ketThucLuc).slice(0,10)):"")+(e.ketThucBoi?", bởi "+e.ketThucBoi:"")+". Điểm đã được tính, điểm danh đã khoá. Cần sửa thì bấm “Mở lại sự kiện”.":"Điểm chưa được cộng. Điểm danh xong thì bấm “Kết thúc sự kiện” để cộng điểm cho người có mặt.")));
