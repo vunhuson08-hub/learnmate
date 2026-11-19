@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-afv/lxNvbl8mh8aoiHhNmIKpPkuBJ4yKQPk6wpufiH4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aEcTU5YVhfK6Dkq8DE2vEJQdNFcPoc5TAkjLc9hwqRY='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; manifest-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sổ nhân sự Lễ Tân NEU</title>
@@ -79,7 +79,7 @@ main{padding:24px 32px 48px;max-width:1264px;width:100%;outline:none}
 .man{display:flex;flex-direction:column;gap:20px}
 .man.vao{animation:vao .16s var(--de)}
 @keyframes vao{from{opacity:0;transform:translateY(6px)}}
-.day{position:fixed;inset:auto 0 0 0;z-index:20;display:none;grid-template-columns:repeat(4,1fr);background:var(--be-mat);border-top:1px solid var(--vien);padding-bottom:env(safe-area-inset-bottom)}
+.day{position:fixed;inset:auto 0 0 0;z-index:20;display:none;grid-template-columns:repeat(5,1fr);background:var(--be-mat);border-top:1px solid var(--vien);padding-bottom:env(safe-area-inset-bottom)}
 .day a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;color:var(--chu-phu);text-decoration:none;font-size:13px}
 .day a[aria-current=page]{color:var(--mau-chinh);font-weight:600}
 .day a[aria-current=page] .ic{stroke-width:2.2}
@@ -171,6 +171,19 @@ th[aria-sort] button{color:var(--chu)}
 .ds a.ten{color:var(--chu);font-weight:600;text-decoration:none}
 .ds a.ten:hover{color:var(--mau-chinh);text-decoration:underline}
 ol.ds{counter-reset:x}
+/* email */
+.em-ds{max-height:340px;overflow:auto;overscroll-behavior:contain;border:1px solid var(--vien);border-radius:8px;padding:0 12px;margin-top:12px}
+.em-ds>li{padding:6px 0}
+.em-ds label{display:flex;align-items:center;gap:12px;margin:0;font-weight:400;font-size:15px;cursor:pointer;flex:1;min-width:0;min-height:40px}
+.em-ds label .ten-em{font-weight:600}
+.em-ds li.khong label{cursor:not-allowed;color:var(--chu-phu)}
+.em-dau{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0 0 12px;font-size:14px}
+.em-dau dt{color:var(--chu-phu)}.em-dau dd{margin:0;overflow-wrap:anywhere}
+.em-khung{border:1px solid var(--vien);border-radius:8px;overflow:auto;max-height:68vh;background:#fff;color-scheme:light}
+.em-bien{display:flex;flex-wrap:wrap;gap:6px}
+.em-bien .chip{min-height:36px;font-size:13px}
+.em-loi-ds{margin:8px 0 0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+@media (min-width:1024px){.em-xem-cot{position:sticky;top:calc(var(--cao-top) + 16px)}}
 /* hồ sơ */
 .hs-dau{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .hs-dau h2{font-size:22px;font-weight:700}
@@ -369,6 +382,7 @@ dialog::backdrop{background:rgb(15 10 12 / .45)}
   <symbol id="i-truoc" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
   <symbol id="i-sau" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
   <symbol id="i-sua" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-thu" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
 </svg>
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
@@ -384,6 +398,7 @@ dialog::backdrop{background:rgb(15 10 12 / .45)}
       <a href="#/thanh-vien" data-nav="thanh-vien" aria-label="Thành viên"><svg class="ic" aria-hidden="true"><use href="#i-nguoi"/></svg><span class="chu-dh">Thành viên</span></a>
       <a href="#/su-kien" data-nav="su-kien" aria-label="Sự kiện và điểm danh"><svg class="ic" aria-hidden="true"><use href="#i-lich"/></svg><span class="chu-dh">Sự kiện &amp; điểm danh</span></a>
       <a href="#/nhap-xuat" data-nav="nhap-xuat" aria-label="Nhập và xuất dữ liệu"><svg class="ic" aria-hidden="true"><use href="#i-doi"/></svg><span class="chu-dh">Nhập/Xuất dữ liệu</span></a>
+      <a href="#/email" data-nav="email" aria-label="Gửi email"><svg class="ic" aria-hidden="true"><use href="#i-thu"/></svg><span class="chu-dh">Gửi email</span></a>
     </nav>
     <div class="ben-chan">
       <a href="#/cai-dat" data-nav="cai-dat" aria-label="Cài đặt"><svg class="ic" aria-hidden="true"><use href="#i-cai"/></svg><span class="chu-dh">Cài đặt</span></a>
@@ -458,6 +473,83 @@ dialog::backdrop{background:rgb(15 10 12 / .45)}
         </div>
       </section>
 
+      <section class="man" id="v-email" hidden aria-labelledby="tieu-de">
+        <p class="phu" id="em-han" aria-live="polite" style="margin-bottom:12px"></p>
+        <div class="luoi2">
+          <div class="cot">
+            <div class="khoi">
+              <h2>Người nhận</h2>
+              <div class="hang">
+                <div class="tim"><label class="an" for="em-tim">Tìm người nhận</label><svg class="ic" aria-hidden="true"><use href="#i-tim"/></svg><input id="em-tim" type="search" placeholder="Tìm tên hoặc mã SV…" autocomplete="off" spellcheck="false" maxlength="60"></div>
+              </div>
+              <div class="hang" style="margin-top:8px">
+                <div class="chon"><label class="an" for="em-gen">Gen</label><select id="em-gen"><option value="">Mọi gen</option></select></div>
+                <div class="chon"><label class="an" for="em-ban">Ban</label><select id="em-ban"><option value="">Mọi ban</option></select></div>
+                <div class="chon"><label class="an" for="em-tt">Trạng thái</label><select id="em-tt"><option value="Đang hoạt động">Đang hoạt động</option><option value="Đã nghỉ">Đã nghỉ</option><option value="">Mọi trạng thái</option></select></div>
+              </div>
+              <div class="hang" style="margin-top:12px">
+                <button class="nut nho" id="em-chon-het" type="button">Chọn hết danh sách đang lọc</button>
+                <button class="nut nho" id="em-bo-het" type="button">Bỏ chọn tất cả</button>
+              </div>
+              <p class="so" id="em-dem" aria-live="polite" style="margin-top:12px;font-weight:600"></p>
+              <ul class="ds em-ds" id="em-ds" data-lenis-prevent tabindex="0" aria-label="Danh sách người nhận"></ul>
+              <p class="phu" id="em-ds-them" style="margin-top:8px" hidden></p>
+            </div>
+            <div class="khoi">
+              <h2>Mẫu thiết kế</h2>
+              <p class="phu" style="margin-bottom:12px">Tải lên tệp .html do ban truyền thông thiết kế. Trong tệp, đặt <strong translate="no">{{noiDung}}</strong> ở chỗ muốn hiện nội dung email. Mẫu đã tải được lưu trong Google Sheets, cả ban dùng chung.</p>
+              <div class="hang">
+                <div class="chon" style="flex:1 1 240px"><label for="em-mau">Mẫu đang dùng</label><select id="em-mau"></select></div>
+              </div>
+              <div class="tep" style="margin-top:12px">
+                <label for="em-tep">Tải mẫu lên: chọn tệp .html (tối đa 300&nbsp;KB)</label>
+                <input id="em-tep" type="file" accept=".html,.htm,text/html">
+                <div class="hang">
+                  <button class="nut nho" id="em-mau-goc" type="button"><svg class="ic" aria-hidden="true"><use href="#i-xuong"/></svg>Tải mẫu gốc về để sửa</button>
+                  <button class="nut nho nguy" id="em-xoa-mau" type="button" hidden>Xoá mẫu này</button>
+                </div>
+                <p class="loi" id="em-mau-loi" role="alert" hidden></p>
+                <p class="goi-y" id="em-mau-bao" hidden></p>
+              </div>
+            </div>
+            <form class="khoi" id="f-em" novalidate>
+              <h2>Nội dung</h2>
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div class="o"><label for="em-ten-gui">Tên người gửi</label><input id="em-ten-gui" maxlength="60" autocomplete="off" placeholder="Ban Nhân sự Lễ Tân NEU…"></div>
+                <div class="o"><label for="em-td">Tiêu đề</label><input id="em-td" maxlength="200" autocomplete="off" placeholder="Ví dụ: Lịch tập huấn nghi thức tuần này…"><p class="loi" id="em-td-loi" hidden></p></div>
+                <div class="o"><label for="em-nd">Nội dung</label><textarea id="em-nd" rows="10" maxlength="10000" placeholder="Chào {{ten}},&#10;&#10;Ban nhân sự gửi bạn lịch tập huấn…"></textarea><p class="loi" id="em-nd-loi" hidden></p>
+                  <p class="goi-y">Để trống một dòng để sang đoạn mới. Viết **chữ đậm** giữa hai cặp dấu sao. Đường link bắt đầu bằng https:// tự thành link bấm được.</p></div>
+                <div><p class="nhan" id="em-bien-nhan">Chèn thông tin riêng của từng người</p><div class="em-bien" id="em-bien" role="group" aria-labelledby="em-bien-nhan"></div>
+                  <p class="goi-y">Bấm để chèn vào chỗ con trỏ. Khi gửi, mỗi người nhận thấy thông tin của chính mình.</p></div>
+              </div>
+            </form>
+          </div>
+          <div class="cot em-xem-cot">
+            <div class="khoi">
+              <h2>Xem trước</h2>
+              <div class="hang" style="margin-bottom:12px">
+                <button class="nut nho" id="em-truoc" type="button" aria-label="Người nhận trước"><svg class="ic" aria-hidden="true"><use href="#i-truoc"/></svg></button>
+                <span class="gian phu so" id="em-xem-ai" aria-live="polite"></span>
+                <button class="nut nho" id="em-sau" type="button" aria-label="Người nhận sau"><svg class="ic" aria-hidden="true"><use href="#i-sau"/></svg></button>
+              </div>
+              <dl class="em-dau"><dt>Từ</dt><dd id="em-tu"></dd><dt>Đến</dt><dd id="em-den"></dd><dt>Tiêu đề</dt><dd id="em-td-xem" style="font-weight:600"></dd></dl>
+              <div class="em-khung" id="em-xem" data-lenis-prevent></div>
+              <p class="loi" id="em-canh" hidden></p>
+              <p class="goi-y">Gmail và Outlook có thể hiện khác đôi chút. Gửi thử cho chính bạn để xem trên điện thoại trước khi gửi cả đội.</p>
+              <div class="hang" style="margin-top:16px">
+                <button class="nut" id="em-thu" type="button"><svg class="ic" aria-hidden="true"><use href="#i-thu"/></svg>Gửi thử cho tôi</button>
+                <button class="nut chinh" id="em-gui" type="button"><svg class="ic" aria-hidden="true"><use href="#i-thu"/></svg>Gửi email</button>
+              </div>
+              <div id="em-tien" hidden style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+                <div class="thuoc" aria-hidden="true"><span class="d-co" id="em-tien-vach" style="width:0"></span></div>
+                <div class="hang"><span class="gian so" id="em-tien-chu" role="status"></span><button class="nut nho" id="em-dung" type="button">Dừng gửi</button></div>
+              </div>
+              <div id="em-kq" hidden style="margin-top:16px" role="status"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="man" id="v-cai-dat" hidden aria-labelledby="tieu-de">
         <form class="khoi" id="f-lh" novalidate>
           <h2>Người liên hệ khi trang gặp sự cố</h2>
@@ -521,6 +613,7 @@ dialog::backdrop{background:rgb(15 10 12 / .45)}
   <a href="#/thanh-vien" data-nav="thanh-vien"><svg class="ic" aria-hidden="true"><use href="#i-nguoi"/></svg>Thành viên</a>
   <a href="#/su-kien" data-nav="su-kien"><svg class="ic" aria-hidden="true"><use href="#i-lich"/></svg>Điểm danh</a>
   <a href="#/nhap-xuat" data-nav="nhap-xuat"><svg class="ic" aria-hidden="true"><use href="#i-doi"/></svg>Nhập/Xuất</a>
+  <a href="#/email" data-nav="email"><svg class="ic" aria-hidden="true"><use href="#i-thu"/></svg>Email</a>
 </nav>
 
 <dialog id="hop-tv" aria-labelledby="hop-tv-tieu-de">
@@ -685,12 +778,20 @@ var kho=(function(){
   if(CO_GOOGLE){
     var goi=function(fn){var a=[].slice.call(arguments,1);return new Promise(function(ok,loi){var run=google.script.run.withSuccessHandler(ok).withFailureHandler(function(e){loi(new Error(e&&e.message?e.message:String(e)));});if(typeof run[fn]!=="function"){loi(new Error("máy chủ Apps Script chưa có hàm "+fn+", hãy dán lại tệp Code.gs mới rồi triển khai phiên bản mới"));return;}run[fn].apply(run,a);});};
     return {demo:false,tai:function(){return goi("taiDuLieu");},luuTV:function(m,moi){return goi("luuThanhVien",m,moi);},nhap:function(ds){return goi("nhapThanhVien",ds);},luuSK:function(e){return goi("luuSuKien",e);},docSheet:function(u){return goi("docSheetDangKy",u);},
-      diemDanhNhieu:function(id,ds){return goi("ghiDiemDanhNhieu",id,ds);},taiDD:function(id){return goi("taiDiemDanh",id);},luuNhom:function(g,b){return goi("luuNhom",g,b);},xoaSK:function(id){return goi("xoaSuKien",id);},nhatKy:function(){return goi("taiNhatKy");},themNguoi:function(id,ds){return goi("themNguoiThamGia",id,ds);},ketThuc:function(id,kt){return goi("ketThucSuKien",id,kt);},dieuChinh:function(d){return goi("themDieuChinh",d);},caiDat:function(c){return goi("luuCaiDat",c);},chotKy:function(t){return goi("chotKy",t);}};
+      diemDanhNhieu:function(id,ds){return goi("ghiDiemDanhNhieu",id,ds);},taiDD:function(id){return goi("taiDiemDanh",id);},luuNhom:function(g,b){return goi("luuNhom",g,b);},xoaSK:function(id){return goi("xoaSuKien",id);},nhatKy:function(){return goi("taiNhatKy");},
+      mauEmail:function(){return goi("taiMauEmail");},luuMau:function(m){return goi("luuMauEmail",m);},xoaMau:function(id){return goi("xoaMauEmail",id);},hanMuc:function(){return goi("hanMucEmail");},guiEmail:function(ds,ten){return goi("guiEmail",ds,ten);},guiThu:function(t){return goi("guiThuEmail",t);},themNguoi:function(id,ds){return goi("themNguoiThamGia",id,ds);},ketThuc:function(id,kt){return goi("ketThucSuKien",id,kt);},dieuChinh:function(d){return goi("themDieuChinh",d);},caiDat:function(c){return goi("luuCaiDat",c);},chotKy:function(t){return goi("chotKy",t);}};
   }
   var tre=function(v){return new Promise(function(ok){setTimeout(function(){ok(JSON.parse(JSON.stringify(v)));},120+Math.random()*160);});};
-  var dem=100;
+  var dem=100,MAU_DEMO=[],hanDemo=100;
   return {demo:true,tai:function(){return tre(taoDemo());},luuTV:function(m){return tre(m);},nhap:function(ds){return tre({soDong:ds.length});},
     luuSK:function(e){if(!e.id){e.id="SK"+(++dem);e.trangThai=SK_MO;}else{var c=skTheoId(e.id);e.trangThai=c?c.trangThai:SK_MO;}if(!e.ky)e.ky=S.ky;return tre(e);},diemDanhNhieu:function(){return tre({ok:true});},taiDD:function(){return tre(null);},luuNhom:function(g,b){return tre({gens:g,bans:b});},xoaSK:function(){return tre({ok:true});},
+    /* Chế độ thử không gửi email thật: mẫu chỉ lưu trong phiên, lượt gửi chỉ giả lập. */
+    mauEmail:function(){return tre(MAU_DEMO);},
+    luuMau:function(m){var r={id:m.id||"M"+(++dem),ten:m.ten,html:m.html,capNhatLuc:new Date().toISOString().slice(0,19)};MAU_DEMO=MAU_DEMO.filter(function(x){return x.id!==r.id;}).concat([r]);return tre(r);},
+    xoaMau:function(id){MAU_DEMO=MAU_DEMO.filter(function(x){return x.id!==id;});return tre({ok:true});},
+    hanMuc:function(){return tre({conLai:hanDemo,nguoiGui:"demo@example.com"});},
+    guiEmail:function(ds){var r={daGui:[],loi:[]};ds.forEach(function(x){var m=TV[x.maSV];if(m&&m.gmail&&hanDemo>0){r.daGui.push(x.maSV);hanDemo--;}else r.loi.push({maSV:x.maSV,lyDo:m&&m.gmail?"tài khoản đã hết lượt gửi email hôm nay":"chưa có gmail hợp lệ"});});r.conLai=hanDemo;return new Promise(function(ok){setTimeout(function(){ok(r);},500+ds.length*40);});},
+    guiThu:function(){return tre({den:"demo@example.com"});},
     /* Chế độ thử không ghi nhật ký thật: trả về vài dòng mẫu để xem cách hiển thị. */
     nhatKy:function(){var a=S.tv[0],b=S.tv[1];return tre([{thoiGian:"2026-11-16T19:42:10",nguoi:"demo@example.com",hanhDong:"Điểm danh",doiTuong:"Tập huấn nghi thức lễ tân cho Gen 10",chiTiet:"2 lượt. Có mặt: "+a.maSV+"; Vắng: "+b.maSV},
       {thoiGian:"2026-11-14T21:05:00",nguoi:"demo@example.com",hanhDong:"Kết thúc sự kiện",doiTuong:"Sinh hoạt đội định kỳ tháng 11",chiTiet:"Điểm được tính, điểm danh khoá"},
@@ -742,7 +843,7 @@ function banNut(btn,dang,chu){if(dang){btn.dataset.chu=btn.textContent;btn.disab
 function capNhatKy(){$$(".ky-chu").forEach(function(e){e.textContent=S.ky;});$("#nhan-ky").textContent=S.ky;}
 
 /* ---------- điều hướng ---------- */
-var TIEU_DE={"tong-quan":"Tổng quan","thanh-vien":"Thành viên","ho-so":"Hồ sơ thành viên","su-kien":"Sự kiện & điểm danh","diem-danh":"Điểm danh","nhap-xuat":"Nhập/Xuất dữ liệu","cai-dat":"Cài đặt"};
+var TIEU_DE={"tong-quan":"Tổng quan","thanh-vien":"Thành viên","ho-so":"Hồ sơ thành viên","su-kien":"Sự kiện & điểm danh","diem-danh":"Điểm danh","nhap-xuat":"Nhập/Xuất dữ liệu","email":"Gửi email","cai-dat":"Cài đặt"};
 /* Tên ngắn cho thanh đầu trang trên điện thoại; trình đọc màn hình vẫn đọc tên đầy đủ. */
 var TD_NGAN={"su-kien":"Sự kiện","nhap-xuat":"Nhập/Xuất","ho-so":"Hồ sơ"};
 var NAV={"ho-so":"thanh-vien","diem-danh":"su-kien"},daTai=false,lanDau=true;
@@ -753,7 +854,7 @@ function dieuHuong(){
   var sec=$("#v-"+v);sec.hidden=false;void sec.offsetWidth;sec.classList.add("vao");
   var td=xoa($("#tieu-de")),ngan=TD_NGAN[v];if(ngan){td.appendChild(h("span",{class:"an-dt"},TIEU_DE[v]));td.appendChild(h("span",{class:"td-ngan","aria-hidden":"true"},ngan));}else td.textContent=TIEU_DE[v];document.title=TIEU_DE[v]+" | Sổ nhân sự Lễ Tân NEU";
   $$("[data-nav]").forEach(function(a){if(a.dataset.nav===(NAV[v]||v))a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
-  ({"tong-quan":veTongQuan,"thanh-vien":veThanhVien,"ho-so":veHoSo,"su-kien":veSuKien,"diem-danh":veDiemDanh,"nhap-xuat":veNhapXuat,"cai-dat":veCaiDat})[v](arg);
+  ({"tong-quan":veTongQuan,"thanh-vien":veThanhVien,"ho-so":veHoSo,"su-kien":veSuKien,"diem-danh":veDiemDanh,"nhap-xuat":veNhapXuat,"email":veEmail,"cai-dat":veCaiDat})[v](arg);
   window.scrollTo(0,0);if(!lanDau)$("#tieu-de").focus({preventScroll:true});lanDau=false;
 }
 window.addEventListener("hashchange",dieuHuong);
@@ -854,7 +955,7 @@ function veHoSo(ma){hsMa=ma;var el=xoa($("#v-ho-so")),m=TV[ma];
   el.appendChild(h("a",{class:"lui",href:"#/thanh-vien"},ic("truoc"),"Thành viên"));
   el.appendChild(h("div",{class:"khoi",style:"display:flex;flex-direction:column;gap:18px"},
     h("div",{class:"hs-dau"},h("span",{class:"av lon","aria-hidden":"true"},chuDau(m.hoTen)),h("div",{style:"flex:1;min-width:0"},h("h2",null,m.hoTen),h("div",{class:"hang",style:"margin-top:6px"},genNhan(m.gen),h("span",{class:"phu"},"Ban "+m.ban),m.trangThai===NGHI?h("span",{class:"nghi"},"Đã nghỉ"):h("span",{class:"tt tt-co"},HOAT))),
-      h("div",{class:"hang hs-nut"},h("button",{class:"nut",type:"button",id:"hs-sua"},ic("sua"),"Sửa hồ sơ"),h("button",{class:"nut chinh",type:"button",id:"hs-diem"},ic("cong"),"Cộng/trừ điểm"))),
+      h("div",{class:"hang hs-nut"},h("button",{class:"nut",type:"button",id:"hs-sua"},ic("sua"),"Sửa hồ sơ"),m.gmail?h("a",{class:"nut",href:"#/email/"+encodeURIComponent(ma)},ic("thu"),"Gửi email"):null,h("button",{class:"nut chinh",type:"button",id:"hs-diem"},ic("cong"),"Cộng/trừ điểm"))),
     h("dl",{class:"tt-hs"},h("div",null,h("dt",null,"Mã sinh viên"),h("dd",{class:"ma",style:"font-size:16px;color:var(--chu)"},m.maSV)),h("div",null,h("dt",null,"Gmail"),h("dd",null,m.gmail?h("a",{href:"mailto:"+m.gmail},m.gmail):"Chưa có")),h("div",null,h("dt",null,"Số điện thoại"),h("dd",{class:"ma",style:"font-size:16px;color:var(--chu)"},m.sdt?h("a",{href:"tel:"+m.sdt},m.sdt):"Chưa có"))),
     h("div",null,h("p",{class:"phu",style:"margin-bottom:8px"},"Điểm trong "+S.ky),h("div",{class:"diem"},h("div",null,h("p",{class:"phu"},"Điểm đoàn"),h("p",{class:"so-lon"},nf.format(x.doan))),h("div",null,h("p",{class:"phu"},"Rèn luyện"),h("p",{class:"so-lon"},nf.format(x.rl))),h("div",null,h("p",{class:"phu"},"Lần có mặt"),h("p",{class:"so-lon"},nf.format(x.tg)))))));
   var ls=S.sk.filter(function(e){return DD[e.id]&&DD[e.id][ma];}).sort(function(a,b){return (b.ngay||"").localeCompare(a.ngay||"");});
@@ -1280,6 +1381,198 @@ function taiNK(){var b=$("#nk-tai");$("#nk-loi").hidden=true;banNut(b,true,"Đan
   .catch(function(er){$("#nk-loi").textContent="Chưa tải được nhật ký: "+er.message+". Bấm lại để thử.";$("#nk-loi").hidden=false;})
   .then(function(){banNut(b,false);if(NK)b.textContent="Tải lại nhật ký";});}
 $("#nk-tai").addEventListener("click",taiNK);$("#nk-tim").addEventListener("input",veNK);
+
+/* ---------- Gửi email ---------- */
+/*
+ * Mỗi email được ghép sẵn ở trang: mẫu + nội dung + thông tin người nhận. Phần xem trước dùng đúng chuỗi HTML sẽ gửi đi.
+ * Mẫu do người dùng tải lên được lọc trước khi lưu: bỏ script, khung nhúng, biểu mẫu, thuộc tính sự kiện, link javascript:.
+ * Xem trước hiện trong Shadow DOM để CSS của mẫu không lan ra trang.
+ */
+var MAU_GOC=['<html lang="vi"><head><style>',
+  'body{margin:0;padding:0;background:#F2F1EC}',
+  'a{color:#8A6D12}',
+  '</style></head><body style="margin:0;padding:0;background:#F2F1EC">',
+  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F2F1EC"><tr><td align="center" style="padding:24px 12px">',
+  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#FFFFFF;border:1px solid #E2E0D8;border-radius:12px">',
+  '<tr><td style="background:#141310;padding:20px 28px;border-radius:12px 12px 0 0">',
+  '<p style="margin:0;font:700 18px/1.3 Arial,Helvetica,sans-serif;color:#E1CB78">Lễ Tân NEU</p>',
+  '<p style="margin:4px 0 0;font:13px/1.4 Arial,Helvetica,sans-serif;color:#ABAAA4">Ban Nhân sự</p></td></tr>',
+  '<tr><td style="padding:28px 28px 12px;font:15px/1.6 Arial,Helvetica,sans-serif;color:#1C1A1B">',
+  '<h1 style="margin:0 0 16px;font:700 22px/1.3 Arial,Helvetica,sans-serif;color:#1C1A1B">{{tieuDe}}</h1>',
+  '{{noiDung}}</td></tr>',
+  '<tr><td style="padding:16px 28px 24px;border-top:1px solid #E2E0D8;font:12px/1.5 Arial,Helvetica,sans-serif;color:#6B6960">',
+  'Email gửi tới {{hoTen}} ({{maSV}}), Gen {{gen}}, ban {{ban}}. Có thắc mắc, bạn trả lời thẳng email này.</td></tr>',
+  '</table></td></tr></table></body></html>'].join("\n");
+var BIEN=[["hoTen","Họ tên"],["ten","Tên gọi"],["maSV","Mã SV"],["gen","Gen"],["ban","Ban"],["diemDoan","Điểm đoàn"],["diemRL","Điểm rèn luyện"],["soLanCoMat","Số lần có mặt"],["ky","Học kỳ"]];
+var EM={chon:{},q:"",gen:"",ban:"",tt:HOAT,mau:"",xem:0,dsMau:null,han:null,dang:false,dung:false,oCuoi:null,hen:0},bongXem=null;
+function escH(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function giaTriBien(m,d){var x=d[m.maSV]||{doan:0,rl:0,tg:0};return {hoTen:m.hoTen,ten:m._ten,maSV:m.maSV,gen:m.gen,ban:m.ban,diemDoan:nf.format(x.doan),diemRL:nf.format(x.rl),soLanCoMat:String(x.tg),ky:S.ky};}
+/* Một lượt thay duy nhất, nên giá trị đã thay không bị thay lần nữa. Biến không biết thì giữ nguyên để người soạn nhìn thấy. */
+function thayBien(s,gt){return String(s).replace(/\{\{\s*([A-Za-z]+)\s*\}\}/g,function(all,k){return Object.prototype.hasOwnProperty.call(gt,k)?gt[k]:all;});}
+function bienLa(s){var ra={},biet={noiDung:1,tieuDe:1};BIEN.forEach(function(b){biet[b[0]]=1;});String(s).replace(/\{\{\s*([A-Za-z]+)\s*\}\}/g,function(all,k){if(!biet[k])ra["{{"+k+"}}"]=1;return all;});return Object.keys(ra);}
+function ndHtml(nd,gt){
+  var doan=String(nd).replace(/\r\n?/g,"\n").trim().split(/\n[ \t]*\n+/);
+  return doan.filter(function(x){return x.trim();}).map(function(x){
+    var t=escH(thayBien(x.trim(),gt));
+    t=t.replace(/\*\*([^*\n]+)\*\*/g,"<strong>$1</strong>");
+    t=t.replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]]/g,function(u){return '<a href="'+u+'" style="color:#8A6D12">'+u+'</a>';});
+    return '<p style="margin:0 0 14px">'+t.replace(/\n/g,"<br>")+'</p>';}).join("\n");}
+function ghepEmail(mau,td,nd,m,d){
+  var gt=giaTriBien(m,d),tieuDe=sach(thayBien(td,gt),200),ge={};
+  Object.keys(gt).forEach(function(k){ge[k]=escH(gt[k]);});
+  ge.tieuDe=escH(tieuDe);ge.noiDung=ndHtml(nd,gt);
+  var chu=thayBien(String(nd).replace(/\r\n?/g,"\n").trim(),gt).replace(/\*\*([^*\n]+)\*\*/g,"$1");
+  return {maSV:m.maSV,tieuDe:tieuDe,html:thayBien(mau,ge),text:tieuDe+"\n\n"+chu};}
+
+/* Lọc HTML của mẫu: chỉ giữ thẻ và thuộc tính dùng được trong email. Trả về số thứ đã bỏ để báo cho người tải. */
+var THE_BO={SCRIPT:1,NOSCRIPT:1,TEMPLATE:1,IFRAME:1,FRAME:1,FRAMESET:1,OBJECT:1,EMBED:1,APPLET:1,PORTAL:1,FORM:1,INPUT:1,BUTTON:1,TEXTAREA:1,SELECT:1,OPTION:1,META:1,BASE:1,LINK:1,TITLE:1,SVG:1,MATH:1,AUDIO:1,VIDEO:1,SOURCE:1,TRACK:1,CANVAS:1,DIALOG:1};
+var TT_DUOC=/^(style|class|id|align|valign|width|height|bgcolor|color|border|cellpadding|cellspacing|colspan|rowspan|alt|title|href|src|background|target|role|dir|lang|face|size|aria-[a-z-]+)$/;
+var CSS_XAU=/expression\s*\(|javascript\s*:|vbscript\s*:|@import|behavior\s*:|-moz-binding/i;
+function locDoc(doc){
+  var bo={the:0,tt:0,anh:0},goc=doc.documentElement;
+  var tw=doc.createTreeWalker(goc,128),cm=[];while(tw.nextNode())cm.push(tw.currentNode);cm.forEach(function(c){c.remove();});
+  [].slice.call(goc.querySelectorAll("*")).forEach(function(el){
+    if(!goc.contains(el))return;
+    if(THE_BO[el.tagName.toUpperCase()]){el.remove();bo.the++;return;}
+    [].slice.call(el.attributes).forEach(function(a){var ten=a.name.toLowerCase(),v=a.value.trim(),bien=/^\{\{\s*[A-Za-z]+\s*\}\}$/.test(v);
+      if(!TT_DUOC.test(ten)){el.removeAttribute(a.name);bo.tt++;}
+      else if(ten==="href"&&!bien&&!/^(https?:|mailto:|tel:|#)/i.test(v)){el.removeAttribute(a.name);bo.tt++;}
+      else if((ten==="src"||ten==="background")&&!bien&&!/^https?:/i.test(v)){el.removeAttribute(a.name);if(/^data:/i.test(v))bo.anh++;else bo.tt++;}
+      else if(ten==="style"&&CSS_XAU.test(v)){el.removeAttribute(a.name);bo.tt++;}});
+    if(el.tagName.toUpperCase()==="STYLE"&&CSS_XAU.test(el.textContent)){el.textContent=el.textContent.replace(/@import[^;]*;?/gi,"").replace(/expression\s*\(|javascript\s*:|vbscript\s*:|behavior\s*:|-moz-binding/gi,"");bo.tt++;}});
+  return bo;}
+function locMau(html){var doc=new DOMParser().parseFromString(html,"text/html"),bo=locDoc(doc);return {html:"<!DOCTYPE html>\n"+doc.documentElement.outerHTML,bo:bo};}
+
+/* Đưa email đã ghép vào khung xem trước. Lọc thêm một lần nữa cho chắc rồi chép từng nút sang Shadow DOM. */
+function veKhungXem(html){
+  var host=$("#em-xem");if(!bongXem)bongXem=host.attachShadow({mode:"open"});xoa(bongXem);
+  var doc=new DOMParser().parseFromString(html,"text/html");locDoc(doc);
+  bongXem.appendChild(h("style",null,":host{display:block}.xw-body{font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#1C1A1B;background:#fff;min-height:100%;margin:0}img{max-width:100%;height:auto}"));
+  [].slice.call(doc.querySelectorAll("style")).forEach(function(st){bongXem.appendChild(h("style",null,st.textContent.replace(/(^|[\s,{}])(html|body)(?=[\s,{.:#\[>~+]|$)/g,"$1.xw-body")));st.remove();});
+  var than=h("div",{class:"xw-body"}),b=doc.body;
+  if(b.getAttribute("style"))than.setAttribute("style",b.getAttribute("style"));if(b.getAttribute("bgcolor"))than.style.backgroundColor=b.getAttribute("bgcolor");
+  [].slice.call(b.childNodes).forEach(function(nut){than.appendChild(document.importNode(nut,true));});
+  [].slice.call(than.querySelectorAll("a[href]")).forEach(function(a){a.target="_blank";a.rel="noopener noreferrer";});
+  bongXem.appendChild(than);}
+
+function mauDangDung(){var ds=EM.dsMau||[];for(var i=0;i<ds.length;i++)if(ds[i].id===EM.mau)return ds[i];return null;}
+function htmlMau(){var m=mauDangDung();return m?m.html:MAU_GOC;}
+function locNhan(){var q=boDau(EM.q).trim();return S.tv.filter(function(m){return (!EM.gen||m.gen===EM.gen)&&(!EM.ban||m.ban===EM.ban)&&(!EM.tt||m.trangThai===EM.tt)&&(!q||m._s.indexOf(q)>=0);}).sort(soSanhTen);}
+function dsNhan(){return S.tv.filter(function(m){return EM.chon[m.maSV]&&m.gmail;}).sort(soSanhTen);}
+function veDsNhan(){
+  var ds=locNhan(),ul=xoa($("#em-ds")),toi=300;
+  if(!ds.length)ul.appendChild(h("li",null,h("p",{class:"phu"},"Không ai khớp bộ lọc. Thử từ khác hoặc chọn Mọi gen, Mọi ban.")));
+  ds.slice(0,toi).forEach(function(m){var co=!!m.gmail,id="em-c-"+m.maSV;
+    ul.appendChild(h("li",{class:co?null:"khong"},h("label",{for:id},h("input",{type:"checkbox",id:id,"data-ma":m.maSV,checked:co&&!!EM.chon[m.maSV],disabled:!co}),
+      h("span",{class:"giua"},h("span",{class:"ten-em"},m.hoTen),h("span",{class:"phu",style:"display:block;overflow-wrap:anywhere"},m.maSV+", "+(co?m.gmail:"chưa có gmail, sửa hồ sơ để thêm"))),genNhan(m.gen))));});
+  var them=$("#em-ds-them");them.hidden=ds.length<=toi;them.textContent="Đang hiện "+nf.format(toi)+" trên "+nf.format(ds.length)+" người. Gõ tên hoặc chọn gen, ban để thu hẹp; nút Chọn hết vẫn chọn đủ "+nf.format(ds.length)+" người.";
+  var coMail=ds.filter(function(m){return m.gmail;}).length;$("#em-chon-het").lastChild.textContent="Chọn hết "+nf.format(coMail)+" người đang lọc";
+  demNhan();}
+function demNhan(){var n=dsNhan().length,b=$("#em-gui");
+  $("#em-dem").textContent=n?"Đã chọn "+nf.format(n)+" người nhận":"Chưa chọn người nhận nào";
+  if(!EM.dang)b.lastChild.textContent=n?"Gửi cho "+nf.format(n)+" người":"Gửi email";
+  if(EM.xem>=Math.max(n,1))EM.xem=0;veXem();}
+function veChonMau(){var sel=xoa($("#em-mau"));sel.appendChild(h("option",{value:""},"Mẫu gốc của trang"));
+  (EM.dsMau||[]).slice().sort(function(a,b){return col.compare(a.ten,b.ten);}).forEach(function(m){sel.appendChild(h("option",{value:m.id},m.ten));});
+  if(!mauDangDung())EM.mau="";sel.value=EM.mau;$("#em-xoa-mau").hidden=!EM.mau;}
+function veXem(){
+  var ds=dsNhan(),mau=htmlMau(),td=$("#em-td").value,nd=$("#em-nd").value,m=ds[EM.xem]||ds[0]||S.tv.filter(function(x){return x.trangThai===HOAT;})[0]||S.tv[0];
+  $("#em-truoc").disabled=$("#em-sau").disabled=ds.length<2;
+  $("#em-xem-ai").textContent=ds.length?"Người nhận "+nf.format(EM.xem+1)+"/"+nf.format(ds.length)+": "+(m?m.hoTen:""):"Chưa chọn người nhận, đang xem thử với "+(m?m.hoTen:"một thành viên");
+  if(!m){xoa($("#em-xem"));return;}
+  var e=ghepEmail(mau,td.trim()?td:"(Chưa có tiêu đề)",nd.trim()?nd:"(Nội dung email sẽ hiện ở đây. Gõ vào ô Nội dung bên trái.)",m,tinhDiem());
+  $("#em-tu").textContent=sach($("#em-ten-gui").value,60)||"Ban Nhân sự Lễ Tân NEU";if(EM.han&&EM.han.nguoiGui)$("#em-tu").textContent+=" <"+EM.han.nguoiGui+">";
+  $("#em-den").textContent=m.hoTen+" <"+(m.gmail||"chưa có gmail")+">";$("#em-td-xem").textContent=e.tieuDe;
+  veKhungXem(e.html);
+  var la=bienLa(mau+" "+td+" "+nd),c=$("#em-canh");c.hidden=!la.length;c.textContent=la.length?"Trang không biết "+la.join(", ")+", nên sẽ gửi nguyên chữ đó. Kiểm tra lại chính tả, ví dụ {{hoTen}}.":"";}
+function henXem(){clearTimeout(EM.hen);EM.hen=setTimeout(veXem,180);}
+function veHanMuc(){var p=$("#em-han");
+  if(kho.demo){p.textContent="Chế độ thử: trang không gửi email thật, chỉ giả lập để bạn xem cách làm.";return;}
+  p.textContent=EM.han?"Gửi từ tài khoản "+EM.han.nguoiGui+". Hôm nay tài khoản này còn gửi được "+nf.format(EM.han.conLai)+" email.":"Đang kiểm tra số email còn gửi được hôm nay…";}
+function taiHanMuc(){return kho.hanMuc().then(function(r){EM.han=r;veHanMuc();veXem();}).catch(function(er){$("#em-han").textContent="Chưa đọc được số email còn gửi được: "+er.message+".";});}
+
+function veEmail(arg){
+  var g=$("#em-gen"),b=$("#em-ban");if(g.options.length!==GENS.length+1){xoa(g).appendChild(h("option",{value:""},"Mọi gen"));GENS.forEach(function(x){g.appendChild(h("option",{value:x},"Gen "+x));});}
+  if(b.options.length!==BANS.length+1){xoa(b).appendChild(h("option",{value:""},"Mọi ban"));BANS.forEach(function(x){b.appendChild(h("option",{value:x},"Ban "+x));});}
+  g.value=EM.gen;b.value=EM.ban;$("#em-tt").value=EM.tt;$("#em-tim").value=EM.q;
+  if(!$("#em-ten-gui").value)$("#em-ten-gui").value="Ban Nhân sự Lễ Tân NEU";
+  if(!$("#em-bien").firstChild)BIEN.forEach(function(x){$("#em-bien").appendChild(h("button",{class:"chip",type:"button","data-bien":x[0],title:"Chèn {{"+x[0]+"}}"},x[1]));});
+  if(arg&&TV[arg]){EM.chon={};EM.chon[arg]=1;EM.xem=0;EM.q="";EM.gen="";EM.ban="";EM.tt="";g.value="";b.value="";$("#em-tt").value="";$("#em-tim").value="";bao("Đã chọn "+TV[arg].hoTen+" làm người nhận.");history.replaceState(null,"","#/email");}
+  veHanMuc();veChonMau();veDsNhan();
+  if(EM.dsMau===null){EM.dsMau=[];kho.mauEmail().then(function(ds){EM.dsMau=ds||[];veChonMau();veXem();}).catch(function(er){EM.dsMau=null;hienLoiMau("Chưa tải được danh sách mẫu: "+er.message+". Mở lại mục này để thử lại.");});}
+  if(!EM.han&&!kho.demo)taiHanMuc();}
+function hienLoiMau(msg){var p=$("#em-mau-loi");p.textContent=msg||"";p.hidden=!msg;}
+
+$("#em-tim").addEventListener("input",function(){EM.q=this.value;veDsNhan();});
+$("#em-gen").addEventListener("change",function(){EM.gen=this.value;veDsNhan();});
+$("#em-ban").addEventListener("change",function(){EM.ban=this.value;veDsNhan();});
+$("#em-tt").addEventListener("change",function(){EM.tt=this.value;veDsNhan();});
+$("#em-ds").addEventListener("change",function(e){var c=e.target;if(!c.dataset||!c.dataset.ma)return;if(c.checked)EM.chon[c.dataset.ma]=1;else delete EM.chon[c.dataset.ma];demNhan();});
+$("#em-chon-het").addEventListener("click",function(){locNhan().forEach(function(m){if(m.gmail)EM.chon[m.maSV]=1;});veDsNhan();});
+$("#em-bo-het").addEventListener("click",function(){EM.chon={};EM.xem=0;veDsNhan();});
+$("#em-truoc").addEventListener("click",function(){var n=dsNhan().length;if(n){EM.xem=(EM.xem-1+n)%n;veXem();}});
+$("#em-sau").addEventListener("click",function(){var n=dsNhan().length;if(n){EM.xem=(EM.xem+1)%n;veXem();}});
+["em-td","em-nd","em-ten-gui"].forEach(function(id){$("#"+id).addEventListener("input",function(){if(id!=="em-ten-gui")datLoi(id,"");henXem();});});
+["em-td","em-nd"].forEach(function(id){$("#"+id).addEventListener("focus",function(){EM.oCuoi=this;});});
+$("#f-em").addEventListener("submit",function(e){e.preventDefault();});
+$("#em-bien").addEventListener("click",function(e){var b=e.target.closest("[data-bien]");if(!b)return;var o=EM.oCuoi||$("#em-nd"),chen="{{"+b.dataset.bien+"}}",d=o.selectionStart==null?o.value.length:o.selectionStart,c=o.selectionEnd==null?d:o.selectionEnd;
+  o.value=o.value.slice(0,d)+chen+o.value.slice(c);o.focus();o.setSelectionRange(d+chen.length,d+chen.length);henXem();});
+$("#em-mau").addEventListener("change",function(){EM.mau=this.value;$("#em-xoa-mau").hidden=!EM.mau;$("#em-mau-bao").hidden=true;hienLoiMau("");veXem();});
+$("#em-mau-goc").addEventListener("click",function(){
+  var dau="<"+"!--\n  Mẫu email gốc của Sổ nhân sự Lễ Tân NEU. Sửa thoải mái rồi tải lên ở mục Gửi email.\n  Bắt buộc giữ {{noiDung}}: chỗ hiện nội dung email.\n  Có thể dùng: {{tieuDe}} "+BIEN.map(function(b){return "{{"+b[0]+"}}";}).join(" ")+"\n  Không dùng được: script, form, iframe. Ảnh phải là link https:// (Gmail không hiện ảnh nhúng sẵn trong tệp).\n-->\n";
+  var url=URL.createObjectURL(new Blob(["<!DOCTYPE html>\n"+dau+MAU_GOC],{type:"text/html;charset=utf-8"})),a=h("a",{href:url,download:"mau-email-le-tan-neu.html"});document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);});
+$("#em-tep").addEventListener("change",function(){var inp=this,f=inp.files&&inp.files[0];hienLoiMau("");$("#em-mau-bao").hidden=true;if(!f)return;
+  if(!/\.html?$/i.test(f.name)){hienLoiMau("Chỉ nhận tệp .html hoặc .htm. Nếu mẫu làm trên Canva hay Figma, xuất ra HTML trước.");inp.value="";return;}
+  if(f.size>300*1024){hienLoiMau("Tệp nặng "+nf.format(Math.round(f.size/1024))+" KB, tối đa 300 KB. Thường do ảnh nhúng sẵn trong tệp; đưa ảnh lên mạng rồi dùng link https://.");inp.value="";return;}
+  f.text().then(function(txt){
+    var r=locMau(txt),ten=sach(f.name.replace(/\.html?$/i,"").replace(/[-_]+/g," "),60)||"Mẫu mới";
+    if(r.html.indexOf("{{noiDung}}")<0)throw new Error("Mẫu chưa có {{noiDung}}. Mở tệp, gõ {{noiDung}} vào chỗ muốn hiện nội dung email rồi tải lại");
+    if(r.html.length>45000)throw new Error("Mẫu dài "+nf.format(r.html.length)+" ký tự sau khi lọc, tối đa 45.000. Bớt phần trang trí hoặc CSS không dùng tới");
+    var cu=(EM.dsMau||[]).filter(function(m){return m.ten===ten;})[0];
+    return kho.luuMau({id:cu?cu.id:"",ten:ten,html:r.html}).then(function(m){
+      EM.dsMau=(EM.dsMau||[]).filter(function(x){return x.id!==m.id;}).concat([m]);EM.mau=m.id;veChonMau();veXem();
+      var ghi=[];if(r.bo.the)ghi.push(nf.format(r.bo.the)+" thẻ không dùng được trong email (script, form, iframe…)");if(r.bo.tt)ghi.push(nf.format(r.bo.tt)+" thuộc tính hoặc link không an toàn");if(r.bo.anh)ghi.push(nf.format(r.bo.anh)+" ảnh nhúng sẵn trong tệp (Gmail không hiện loại ảnh này, hãy dùng link https://)");
+      var p=$("#em-mau-bao");p.textContent=(cu?"Đã thay mẫu “"+ten+"”.":"Đã lưu mẫu “"+ten+"”.")+(ghi.length?" Trang đã bỏ "+ghi.join("; ")+".":"");p.hidden=false;bao(cu?"Đã thay mẫu cùng tên.":"Đã lưu mẫu mới.");});})
+  .catch(function(er){hienLoiMau(er.message+".");}).then(function(){inp.value="";});});
+$("#em-xoa-mau").addEventListener("click",function(){var b=this,m=mauDangDung();if(!m)return;
+  if(b.dataset.xn!=="1"){b.dataset.xn="1";b.textContent="Bấm lần nữa để xoá “"+m.ten+"”";setTimeout(function(){if(b.dataset.xn==="1"){b.dataset.xn="";b.textContent="Xoá mẫu này";}},4000);return;}
+  b.dataset.xn="";b.disabled=true;b.textContent="Đang xoá…";
+  kho.xoaMau(m.id).then(function(){EM.dsMau=EM.dsMau.filter(function(x){return x.id!==m.id;});EM.mau="";veChonMau();veXem();bao("Đã xoá mẫu “"+m.ten+"”.");})
+  .catch(function(er){bao("Chưa xoá được mẫu: "+er.message,true);}).then(function(){b.disabled=false;b.textContent="Xoá mẫu này";});});
+
+function kiemSoan(){var td=$("#em-td").value.trim(),nd=$("#em-nd").value.trim(),ok=true;
+  if(!datLoi("em-td",td.length<2?"Nhập tiêu đề email.":""))ok=false;if(!datLoi("em-nd",nd?"":"Nhập nội dung email."))ok=false;
+  if(!ok)$(td.length<2?"#em-td":"#em-nd").focus();return ok;}
+function taoEmail(ds){var d=tinhDiem(),mau=htmlMau(),td=$("#em-td").value.trim(),nd=$("#em-nd").value;return ds.map(function(m){return ghepEmail(mau,td,nd,m,d);});}
+$("#em-thu").addEventListener("click",function(){var b=this;if(!kiemSoan())return;
+  var ds=dsNhan(),m=ds[EM.xem]||ds[0]||S.tv[0];if(!m)return;var e=taoEmail([m])[0];e.tenGui=sach($("#em-ten-gui").value,60);
+  banNut(b,true,"Đang gửi thử…");kho.guiThu(e).then(function(r){bao("Đã gửi thử tới "+r.den+", ghép theo thông tin của "+m.hoTen+". Mở hộp thư để xem.");if(EM.han&&!kho.demo)taiHanMuc();})
+  .catch(function(er){bao("Chưa gửi thử được: "+er.message,true);}).then(function(){banNut(b,false);});});
+
+function veKq(daGui,loi,tong,dung){var k=xoa($("#em-kq"));k.hidden=false;
+  k.appendChild(h("p",{style:"font-weight:600"},(dung?"Đã dừng. ":"")+"Đã gửi "+nf.format(daGui.length)+" trên "+nf.format(tong)+" email."));
+  if(loi.length){var ul=h("ul",{class:"em-loi-ds"});loi.slice(0,50).forEach(function(x){var m=TV[x.maSV];ul.appendChild(h("li",null,(m?m.hoTen+" ("+x.maSV+")":x.maSV)+": "+x.lyDo));});if(loi.length>50)ul.appendChild(h("li",{class:"phu"},"và "+nf.format(loi.length-50)+" người khác cùng lý do tương tự."));
+    k.appendChild(h("p",{class:"loi"},nf.format(loi.length)+" người chưa nhận được:"));k.appendChild(ul);
+    k.appendChild(h("div",{class:"hang",style:"margin-top:12px"},h("button",{class:"nut",type:"button",on:{click:function(){EM.chon={};loi.forEach(function(x){EM.chon[x.maSV]=1;});EM.xem=0;veDsNhan();k.hidden=true;$("#em-gui").focus();bao("Đã chọn lại "+nf.format(loi.length)+" người chưa nhận được. Kiểm tra rồi bấm Gửi.");}}},"Chọn lại những người này để gửi lại")));}}
+$("#em-gui").addEventListener("click",function(){var b=this;if(EM.dang)return;if(!kiemSoan())return;
+  var ds=dsNhan();if(!ds.length){bao("Chưa chọn người nhận. Tích chọn ở mục Người nhận.",true);$("#em-tim").focus();return;}
+  if(EM.han&&ds.length>EM.han.conLai){bao("Hôm nay tài khoản chỉ còn gửi được "+nf.format(EM.han.conLai)+" email mà danh sách có "+nf.format(ds.length)+" người. Bớt người nhận hoặc gửi phần còn lại vào ngày mai.",true);return;}
+  if(b.dataset.xn!=="1"){b.dataset.xn="1";b.lastChild.textContent="Bấm lần nữa để gửi "+nf.format(ds.length)+" email";setTimeout(function(){if(b.dataset.xn==="1"){b.dataset.xn="";demNhan();}},5000);return;}
+  b.dataset.xn="";
+  var thu=taoEmail(ds),ten=sach($("#em-ten-gui").value,60),daGui=[],loi=[],i=0,LO=20,tong=thu.length;
+  EM.dang=true;EM.dung=false;b.disabled=true;$("#em-thu").disabled=true;b.lastChild.textContent="Đang gửi…";$("#em-kq").hidden=true;$("#em-tien").hidden=false;$("#em-dung").disabled=false;
+  function tien(){$("#em-tien-vach").style.width=(i/tong*100)+"%";$("#em-tien-chu").textContent="Đã xử lý "+nf.format(i)+"/"+nf.format(tong)+" email, gửi được "+nf.format(daGui.length)+".";}
+  function xong(){EM.dang=false;b.disabled=false;$("#em-thu").disabled=false;$("#em-tien").hidden=true;
+    var conLai=thu.slice(i).map(function(x){return {maSV:x.maSV,lyDo:"chưa gửi vì đã dừng"};});veKq(daGui,loi.concat(conLai),tong,EM.dung&&i<tong);
+    EM.chon={};EM.xem=0;veDsNhan();if(!kho.demo)taiHanMuc();
+    bao(daGui.length?"Đã gửi "+nf.format(daGui.length)+" email.":"Chưa gửi được email nào.",!daGui.length);}
+  function lo(){if(i>=tong||EM.dung){xong();return;}tien();var phan=thu.slice(i,i+LO);
+    kho.guiEmail(phan,ten).then(function(r){daGui=daGui.concat(r.daGui||[]);loi=loi.concat(r.loi||[]);i+=phan.length;if(EM.han&&r.conLai!=null){EM.han.conLai=r.conLai;veHanMuc();}tien();
+      if(r.conLai===0&&i<tong){EM.dung=true;}lo();})
+    .catch(function(er){loi=loi.concat(phan.map(function(x){return {maSV:x.maSV,lyDo:er.message};}));i+=phan.length;EM.dung=true;xong();});}
+  lo();});
+$("#em-dung").addEventListener("click",function(){EM.dung=true;this.disabled=true;$("#em-tien-chu").textContent="Đang dừng sau lượt hiện tại…";});
+window.addEventListener("beforeunload",function(e){if(EM.dang){e.preventDefault();e.returnValue="";}});
 
 /* ---------- khởi động ---------- */
 function dienChon(){var o=function(sel,arr,lab){var s=$(sel);$$("option",s).forEach(function(x){if(x.value)x.remove();});arr.forEach(function(v){s.appendChild(h("option",{value:v},lab?lab(v):v));});};
